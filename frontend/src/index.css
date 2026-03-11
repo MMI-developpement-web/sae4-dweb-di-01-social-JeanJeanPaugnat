@@ -24,14 +24,58 @@
 
 
   /* Toutes mes tailles de polices */
-  --font-size-small: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-large: 1.25rem;
-  --font-size-xlarge: 1.5rem;
+  --font-size-xsmall: 0.625rem;
+  --font-size-small: 0.750rem;
+
+  --font-size-base: 0.875rem;
+
+  --font-size-large: 1rem;
+  --font-size-xlarge: 1.125rem;
+  --font-size-xxlarge: 1.875rem;
 
 
 }
 
 body {
   font-family: var(--font-poppins);
+}
+
+.title16-medium {
+  font-size: var(--font-size-large);
+  font-weight: 500;
+}
+
+.p12-regular {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+}
+
+.p12-semi-bold {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.p12-medium {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+}
+
+.span10-regular {
+  font-size: var(--font-size-small);
+  font-weight: 400;
+}
+
+.title14-semi-bold {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+
+.title30-semi-bold {
+  font-size: var(--font-size-xxlarge);
+  font-weight: 600;
+}
+
+.title18-medium {
+  font-size: var(--font-size-xlarge);
+  font-weight: 500;
 }

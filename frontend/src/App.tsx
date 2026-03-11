@@ -2,6 +2,9 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
+import InputTest from './components/ui/Input'
+import Icon from './components/ui/Icon'
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -14,6 +17,8 @@ function App() {
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
+        <Icon  size={48} color="blue" />
+        <InputTest variant="secondary" placeholder="Type something..." />
       </div>
       <h1>Vite + React</h1>
       <div className="card">
