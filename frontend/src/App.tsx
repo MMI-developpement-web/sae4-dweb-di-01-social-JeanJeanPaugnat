@@ -5,6 +5,7 @@ import viteLogo from '/vite.svg'
 import InputTest from './components/ui/Input'
 import Icon from './components/ui/Icon'
 import Button from './components/ui/button'
+import Avatar from './components/ui/Avatar'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,25 +21,13 @@ function App() {
         <Button variant="outline" icon="camera" />
         <Button variant="default" icon="image"/>
         <Button variant="warning" size="icon" icon="trash" />
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <Icon  size={48} color="blue" />
-        <InputTest variant="secondary" placeholder="Type something..." />
-
+        
+        <Avatar url="https://avatars.githubusercontent.com/u/110604?v=4" />
+        <Avatar editable url="https://avatars.githubusercontent.com/u/110604?v=4" />
+        <Avatar editable />
+        <Avatar size="xl" url="https://avatars.githubusercontent.com/u/110604?v=4" />
+        <Avatar size="sm" editable url="https://avatars.githubusercontent.com/u/110604?v=4" />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-          <p className='bg-red-500'>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
