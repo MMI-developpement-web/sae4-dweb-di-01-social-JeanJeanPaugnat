@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { ImagePlus } from "lucide-react";
 import { cn } from "../../lib/utils";
 
-const AvatarVariants = cva("relative flex-shrink-0", {
+const AvatarVariants = cva("relative flex-shrink-0 rounded-full overflow-hidden", {
   variants: {
     size: {
       sm: "size-[44px]",
@@ -27,20 +27,9 @@ export default function Avatar({
   editable = false,
 }: AvatarProps) {
   const resolvedSize = editable ? "xl" : (size ?? "sm");
-  const maskSrc = resolvedSize === "xl";
 
   return (
-    <div
-      className={cn(AvatarVariants({ size: resolvedSize }), className)}
-      style={{
-        maskImage: `url('${maskSrc}')`,
-        maskSize: "100% 100%",
-        maskRepeat: "no-repeat",
-        WebkitMaskImage: `url('${maskSrc}')`,
-        WebkitMaskSize: "100% 100%",
-        WebkitMaskRepeat: "no-repeat",
-      }}
-    >
+    <div className={cn(AvatarVariants({ size: resolvedSize }), className)}>
       {url ? (
         <img
           alt=""
@@ -52,7 +41,7 @@ export default function Avatar({
       )}
       {editable && (
         <div className="absolute inset-0 flex items-center justify-center bg-[rgba(110,110,110,0.35)]">
-          <ImagePlus className="text-white" size={24} />
+          <ImagePlus className="text-white" size={30} />
         </div>
       )}
     </div>
