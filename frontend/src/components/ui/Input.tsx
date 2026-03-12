@@ -7,9 +7,9 @@ import { cn } from "../../lib/utils";
 // - variant: default, secondary, success, warning, destructive, outline
 // - size: sm, md, lg
 
-const ButtonVariants = cva(
+const InputVariants = cva(
   // Classes de base
-  "flex items-center justify-center rounded-[8px] px-[16px] h-[40px] p12-regular",
+  "flex items-center justify-center w-full rounded-[8px] px-[16px] h-[40px] p12-regular",
   {
     variants: {
       variant: {
@@ -32,15 +32,15 @@ interface InputDataProps {
 
 
 
-interface InputProps extends InputDataProps, VariantProps<typeof ButtonVariants> {}
+interface InputProps extends InputDataProps, VariantProps<typeof InputVariants> {}
 
-export default function InputTest({
+export default function Input({
   variant,
   action = "text",
   ...props
 }: InputProps) {
   return (
-    <input className={cn(ButtonVariants({ variant}))} type={action} {...props} placeholder={props.placeholder} />
+    <input className={cn(InputVariants({ variant}))} type={action} {...props} placeholder={props.placeholder} />
   );
 }
 
