@@ -37,45 +37,53 @@
 }
 
 body {
-  font-family: var(--font-poppins);
+  
 }
 
 .title16-medium {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-large);
   font-weight: 500;
 }
 
 .p12-regular {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-base);
   font-weight: 400;
 }
 
 .p12-semi-bold {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-base);
   font-weight: 600;
 }
 
 .p12-medium {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-base);
   font-weight: 500;
 }
 
 .span10-regular {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-small);
   font-weight: 400;
 }
 
 .title14-semi-bold {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-small);
   font-weight: 600;
 }
 
 .title30-semi-bold {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-xxlarge);
   font-weight: 600;
 }
 
 .title18-medium {
+  font-family: var(--font-poppins);
   font-size: var(--font-size-xlarge);
   font-weight: 500;
 }

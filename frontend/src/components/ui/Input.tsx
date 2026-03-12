@@ -37,7 +37,6 @@ interface InputProps extends InputDataProps, VariantProps<typeof ButtonVariants>
 export default function InputTest({
   variant,
   action = "text",
-  
   ...props
 }: InputProps) {
   return (
