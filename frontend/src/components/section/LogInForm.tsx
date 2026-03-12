@@ -10,15 +10,15 @@ export default function LogInForm() {
     return (
         <section className="flex flex-col w-md justify-center p-15 gap-[30px] bg-light-bg">
             <h2 className="title30-semi-bold">Log In</h2>
-            <FormField label="Email"  placeholder="Email" action="email" />
-            <FormField label="Password"  placeholder="Password" action="password" />
-            <div className="flex flex-row items-center justify-center gap-[8px] span10-regular ">
+            <FormField label="Email"  placeholder="Enter your email" action="email" />
+            <FormField label="Password"  placeholder="Enter your password" action="password" />
+            <div className="flex flex-row items-center justify-center gap-[8px] text10-regular ">
                 <Icon nameIcon="circle-alert" size={18} color='#F22D2D' />
                 <span className="text-red-warning text12-regular">Incorrect email or password</span>
             </div>
-            <div className="flex flex-row span10-regular items-center justify-center">
-                <span className="">Don't have an account?</span>
-                <a href="#" className="text-blue-800 text12-regular">Sign up</a>
+            <div className="flex flex-row text10-regular items-center justify-center">
+                <span className="text-light-text">Don't have an account?</span>
+                <a href="#" className="text-blue-800 ">Sign up</a>
             </div>
             <Button text="Log in" size="lg" />
         </section>

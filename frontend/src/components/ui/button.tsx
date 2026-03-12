@@ -2,6 +2,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 import Icon from "./Icon";
+import type { IconName } from "lucide-react/dynamic";
 
 // Variants:
 // - variant: default (dark bg), outline (border dark), warning (red bg)
@@ -39,7 +40,7 @@ const ButtonVariants = cva(
 
 interface ButtonDataProps {
   text?: string;
-  icon?: string;
+  icon?: IconName;
 }
 
 interface ButtonProps
