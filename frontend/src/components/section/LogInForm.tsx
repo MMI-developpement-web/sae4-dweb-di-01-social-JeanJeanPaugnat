@@ -16,9 +16,9 @@ export default function LogInForm() {
                 <Icon nameIcon="circle-alert" size={18} color='#F22D2D' />
                 <span className="text-red-warning text12-regular">Incorrect email or password</span>
             </div>
-            <div className="flex flex-row text10-regular items-center justify-center">
+            <div className="flex flex-row gap-2.5 text10-regular items-center justify-center">
                 <span className="text-light-text">Don't have an account?</span>
-                <a href="#" className="text-blue-800 ">Sign up</a>
+                <a href="#" className="text-blue-800 ">Log In</a>
             </div>
             <Button text="Log in" size="lg" />
         </section>

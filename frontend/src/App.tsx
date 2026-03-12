@@ -8,6 +8,7 @@ import Button from './components/ui/button'
 import Avatar from './components/ui/Avatar'
 import LogInForm from './components/section/LogInForm'
 import SignUpForm from './components/section/SignUpform'
+import CreatePost from './components/section/CreatePost'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,6 +20,8 @@ function App() {
             <LogInForm/>
             <SignUpForm/>
           </div>
+          <CreatePost />
+        
 
         <Button text="Sign up" />
         <Button variant="outline" text="Cancel" />
