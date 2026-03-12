@@ -78,7 +78,7 @@ export default function SignUpForm() {
 
       <div className="flex flex-row gap-2.5 items-center justify-center text10-regular">
         <span className="text-light-text">Already have account?</span>
-        <a href="#" className="text-[#6E5DE7]">Login</a>
+        <a href="/login" className="text-[#6E5DE7]">Login</a>
       </div>
 
       <Button text="Sign up" size="lg" />

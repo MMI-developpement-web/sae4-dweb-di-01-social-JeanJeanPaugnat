@@ -18,7 +18,7 @@ export default function LogInForm() {
             </div>
             <div className="flex flex-row gap-2.5 text10-regular items-center justify-center">
                 <span className="text-light-text">Don't have an account?</span>
-                <a href="#" className="text-blue-800 ">Log In</a>
+                <a href="/signup" className="text-blue-800 ">Sign Up</a>
             </div>
             <Button text="Log in" size="lg" />
         </section>
