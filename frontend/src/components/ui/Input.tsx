@@ -9,12 +9,12 @@ import { cn } from "../../lib/utils";
 
 const ButtonVariants = cva(
   // Classes de base
-  "flex items-center justify-center rounded-[8px] px-[16px] h-[40px]",
+  "flex items-center justify-center rounded-[8px] px-[16px] h-[40px] p12-regular",
   {
     variants: {
       variant: {
         default: "bg-[#DEDEDE]",
-        secondary: "border border-[#C7C9D9]",
+        secondary: "border-[1px] border-[#C7C9D9]",
       },
     },
     defaultVariants: {

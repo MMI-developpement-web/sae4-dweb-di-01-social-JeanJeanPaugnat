@@ -6,6 +6,7 @@ import InputTest from './components/ui/Input'
 import Icon from './components/ui/Icon'
 import Button from './components/ui/button'
 import Avatar from './components/ui/Avatar'
+import LogInForm from './components/section/LogInForm'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -13,6 +14,8 @@ function App() {
   return (
     <>
       <div>
+        <LogInForm/>
+
         <Button text="Sign up" />
         <Button variant="outline" text="Cancel" />
         <Button variant="warning" size="lg" text="Supprimer" />
@@ -21,6 +24,10 @@ function App() {
         <Button variant="outline" icon="camera" />
         <Button variant="default" icon="image"/>
         <Button variant="warning" size="icon" icon="trash" />
+
+        <InputTest placeholder="Username" />
+        <InputTest variant="secondary" placeholder="Email" action="email" />
+        <InputTest variant="default" action="password" placeholder="Password" />
         
         <Avatar url="https://avatars.githubusercontent.com/u/110604?v=4" />
         <Avatar editable url="https://avatars.githubusercontent.com/u/110604?v=4" />
