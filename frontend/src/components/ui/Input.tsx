@@ -25,14 +25,11 @@ const InputVariants = cva(
 
 
 
-interface InputDataProps {
-    action?: "text" | "password" | "email";
-    placeholder?: string;
+interface InputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">,
+    VariantProps<typeof InputVariants> {
+  action?: "text" | "password" | "email";
 }
-
-
-
-interface InputProps extends InputDataProps, VariantProps<typeof InputVariants> {}
 
 export default function Input({
   variant,

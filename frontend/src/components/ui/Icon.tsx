@@ -1,19 +1,21 @@
-import React from 'react';
-import  { DynamicIcon } from 'lucide-react/dynamic';
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
 
 //function de recherche d'icône dans la librairie lucide-react
 
 
 
 interface IconProps {
-  nameIcon?: string;
+  nameIcon?: IconName;
   size?: number;
   color?: string;
 }
 
 
-export default function Icon({ 
-    nameIcon = 'file', size = 24, color = 'currentColor', ...props
+export default function Icon({
+  nameIcon = 'file',
+  size = 24,
+  color = 'currentColor',
+  ...props
 }: IconProps) {
 
     return (
