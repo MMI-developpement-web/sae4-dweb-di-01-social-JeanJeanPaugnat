@@ -4,7 +4,7 @@ namespace App\Controller\Api;
 
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/posts', name: 'api_posts_')]
+#[Route('/posts', name: 'api_posts_')]
 class ApiPostController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
