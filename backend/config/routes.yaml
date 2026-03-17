@@ -9,3 +9,12 @@
 
 controllers:
     resource: routing.controllers
+
+# Import api logic routes
+api:
+    resource:
+        path: ../src/Controller/Api
+        namespace: App\Controller\Api
+    type: attribute
+    prefix: '/api' # Préfixe pour les routes API
+    name_prefix: 'api_'
