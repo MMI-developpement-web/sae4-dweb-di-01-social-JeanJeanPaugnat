@@ -20,9 +20,29 @@ class UserCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnIndex(),
+            TextField::new('username'),
             EmailField::new('email'),
             ArrayField::new('roles'),
             TextField::new('password')->onlyOnForms(),
         ];
     }
+    // // Hash le mot de passe lors de la création d'un utilisateur
+    // use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+    // use Doctrine\Persistence\ObjectManager;
+
+    // public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    // {
+    // }
+
+    // public function persistEntity(ObjectManager $entityManager, $entityInstance): void
+    // {
+    //     if ($entityInstance instanceof User) {
+    //         $plainPassword = $entityInstance->getPassword();
+    //         if ($plainPassword) {
+    //             $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $plainPassword);
+    //             $entityInstance->setPassword($hashedPassword);
+    //         }
+    //     }
+    //     parent::persistEntity($entityManager, $entityInstance);
+    // }
 }
