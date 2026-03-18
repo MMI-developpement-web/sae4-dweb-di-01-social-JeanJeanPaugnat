@@ -15,23 +15,23 @@ class TokenService
 
     public function createNewToken(User $user): AccessToken
     {
-        // 1. Supprimer l'ancien token s'il existe
-        if ($oldToken = $user->getAccessToken()) {
-            $this->entityManager->remove($oldToken);
-        }
-        
-        // 2. Générer une nouvelle valeur de token
-        // bin2hex(random_bytes(32)) est la recommandation du TP
+        // Générer une nouvelle valeur de token
         $rawToken = bin2hex(random_bytes(32)); 
 
-        // 3. Créer la nouvelle entité
-        $token = new AccessToken();
-        $token->setUser($user);
-        $token->setValue($rawToken); 
-        // Si vous avez ajouté createdAt, vous pouvez le définir ici
+        // 1. Récupérer l'ancien token s'il existe
+        $token = $user->getAccessToken();
         
-        // 4. Persister et flusher
-        $this->entityManager->persist($token);
+        if (!$token) {
+            // 2. Créer une nouvelle entité si elle n'existe pas
+            $token = new AccessToken();
+            $token->setUser($user);
+            $this->entityManager->persist($token);
+        }
+
+        // 3. Mettre à jour la valeur du token
+        $token->setValue($rawToken); 
+        
+        // 4. Flusher
         $this->entityManager->flush();
 
         return $token;

@@ -3,8 +3,15 @@ import { cn } from "../../lib/utils";
 import Icon from "../ui/Icon";
 import FormField from "../ui/FormField";
 import Button from "../ui/button";
+import { Login } from "../../utils/UserData";
 
-
+let handleLogin = async (email: string, password: string) => {
+    let data = await Login(email, password);
+    if (data) {
+        // tu peux stocker les données dans un contexte ou un state global ici
+        console.log("User data after login:", data);
+    }
+}
 
 export default function LogInForm() {
     return (
@@ -20,7 +27,7 @@ export default function LogInForm() {
                 <span className="text-light-text">Don't have an account?</span>
                 <a href="/signup" className="text-blue-800 ">Sign Up</a>
             </div>
-            <Button text="Log in" size="lg" />
+            <Button text="Log in" size="lg" onClick={() => handleLogin("gg@gmail.com", "Azerty")} />
         </section>
     );
 }
