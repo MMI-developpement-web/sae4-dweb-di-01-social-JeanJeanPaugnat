@@ -5,23 +5,28 @@ namespace App\Entity;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
+    #[Groups('default')]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups('default')]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $Content = null;
 
+    #[Groups('default')]
     #[ORM\Column]
     private ?\DateTime $Date_creation = null;
 
+    #[Groups('default')]
     #[ORM\ManyToOne(inversedBy: 'posts')]
-    private ?user $user = null;
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -52,12 +57,12 @@ class Post
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
