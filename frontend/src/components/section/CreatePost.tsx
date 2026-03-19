@@ -2,8 +2,22 @@ import { useState } from "react";
 import Input from "../ui/Input";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
+import { createPost } from "../../utils/PostData";
 
 const MAX_CHARS = 280;
+
+// Fonction pour gérer la publication du post
+const handlePublish = async (content: string) => {
+    if (content.length > MAX_CHARS) {
+        alert("Your post exceeds the maximum character limit.");
+        return;
+    }
+    let data = await createPost(content);
+    if (data) {
+        console.log("Post created successfully:", data);
+        // tu peux rediriger l'utilisateur ou mettre à jour l'interface ici
+    }
+};
 
 export default function CreatePost() {
     const [text, setText] = useState("");
@@ -14,7 +28,7 @@ export default function CreatePost() {
             <div className="flex flex-row items-center justify-between px-[33px] py-[17px] border-b border-b-[0.5px] border-[#9C9C9C]">
                 <p className="p12-medium text-dark-bg w-[76px]">Cancel</p>
                 <h3 className="title14-semi-bold text-dark-bg">New Post</h3>
-                <Button text="Publish" size="md" />
+                <Button text="Publish" size="md" onClick={() => handlePublish(text)} />
             </div>
 
             <div className="flex flex-col items-center px-[30px] pt-[23px]">
