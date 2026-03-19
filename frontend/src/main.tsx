@@ -7,6 +7,7 @@ import Root from './routes/Root.tsx';
 import LogIn from './routes/LogIn.tsx';
 import SignUp from './routes/SignUp.tsx';
 import CreatePost from './routes/CreatePost.tsx';
+import Feed from './routes/Feed.tsx';
 
 // import './index.css';
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: '/create-post',
     element: <CreatePost />,
+  },
+  {
+    path: '/feed',
+    element: <Feed />,
   }
 ]);
 
