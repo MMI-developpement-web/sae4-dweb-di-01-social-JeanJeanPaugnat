@@ -20,6 +20,9 @@ class Post
     #[ORM\Column]
     private ?\DateTime $Date_creation = null;
 
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    private ?user $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Post
     public function setDateCreation(\DateTime $Date_creation): static
     {
         $this->Date_creation = $Date_creation;
+
+        return $this;
+    }
+
+    public function getUser(): ?user
+    {
+        return $this->user;
+    }
+
+    public function setUser(?user $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
