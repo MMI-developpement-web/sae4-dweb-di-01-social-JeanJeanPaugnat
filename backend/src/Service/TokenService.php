@@ -15,8 +15,8 @@ class TokenService
 
     public function createNewToken(User $user): AccessToken
     {
-        // Générer une nouvelle valeur de token
-        $rawToken = bin2hex(random_bytes(32)); 
+        
+        $rawToken = bin2hex(random_bytes(32));
 
         // 1. Récupérer l'ancien token s'il existe
         $token = $user->getAccessToken();
