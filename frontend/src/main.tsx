@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from './routes/Root.tsx';
 import LogIn from './routes/LogIn.tsx';
 import SignUp from './routes/SignUp.tsx';
+import CreatePost from './routes/CreatePost.tsx';
 
 // import './index.css';
 
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignUp />,
+  },
+  {
+    path: '/create-post',
+    element: <CreatePost />,
   }
 ]);
 

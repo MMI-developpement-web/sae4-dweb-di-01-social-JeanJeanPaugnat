@@ -9,11 +9,12 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/admin/login', name: 'app_admin_login')]
+    #[Route('/admin/login', name: 'admin_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+
 
         return $this->render('@EasyAdmin/page/login.html.twig', [
             'error' => $error,
@@ -25,7 +26,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/logout', name: 'app_admin_logout')]
+    #[Route('/admin/logout', name: 'admin_logout')]
     public function logout(): void
     {
         throw new \LogicException('Géré par Symfony.');

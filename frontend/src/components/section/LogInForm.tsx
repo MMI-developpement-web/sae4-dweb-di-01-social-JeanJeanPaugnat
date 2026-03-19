@@ -27,7 +27,7 @@ export default function LogInForm() {
                 <span className="text-light-text">Don't have an account?</span>
                 <a href="/signup" className="text-blue-800 ">Sign Up</a>
             </div>
-            <Button text="Log in" size="lg" onClick={() => handleLogin("gg@gmail.com", "Azerty")} />
+            <Button text="Log in" size="lg" onClick={() => handleLogin("ggg@gmail.com", "Azerty")} />
         </section>
     );
 }
