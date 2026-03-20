@@ -1,8 +1,8 @@
-
+import API_URL from "./Api";
 
 let getAllPosts = async function() {
     // let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`http://localhost:8080/api/post`, {
+    let response = await fetch(`${API_URL}/post`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -22,7 +22,7 @@ let getAllPosts = async function() {
 
 let createPost = async function(content: string) {
     let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`http://localhost:8080/api/post/create`, {
+    let response = await fetch(`${API_URL}/post/create`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

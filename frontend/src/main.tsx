@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 
-import Root from './routes/Root.tsx';
 import LogIn from './routes/LogIn.tsx';
 import SignUp from './routes/SignUp.tsx';
 import CreatePost from './routes/CreatePost.tsx';
