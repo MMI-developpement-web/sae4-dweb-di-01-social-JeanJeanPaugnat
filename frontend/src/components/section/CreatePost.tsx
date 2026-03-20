@@ -15,7 +15,7 @@ const handlePublish = async (content: string) => {
     let data = await createPost(content);
     if (data) {
         console.log("Post created successfully:", data);
-        // tu peux rediriger l'utilisateur ou mettre à jour l'interface ici
+        
     }
 };
 
@@ -24,7 +24,7 @@ export default function CreatePost() {
     const remaining = MAX_CHARS - text.length;
 
     return (
-        <section className="bg-light-bg rounded-t-[26px] overflow-hidden w-full h-full">
+        <section className="bg-light-bg rounded-t-[26px] overflow-hidden w-full h-dvh">
             <div className="flex flex-row items-center justify-between px-[33px] py-[17px] border-b border-b-[0.5px] border-[#9C9C9C]">
                 <p className="p12-medium text-dark-bg w-[76px]">Cancel</p>
                 <h3 className="title14-semi-bold text-dark-bg">New Post</h3>
