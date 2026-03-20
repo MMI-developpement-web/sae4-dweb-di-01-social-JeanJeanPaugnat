@@ -34,14 +34,15 @@ const router = createBrowserRouter([
   {
     path: '/feed',
     element: <Feed />,
-  },
-]);
+  }
+], {
+  basename: import.meta.env.BASE_URL
+});
 
 
 
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <RouterProvider router={router} />
-      <Navbar variant="default" />
     </React.StrictMode>,
   )

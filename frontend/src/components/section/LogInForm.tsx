@@ -4,29 +4,30 @@ import FormField from "../ui/FormField";
 import Button from "../ui/button";
 import { Login } from "../../utils/UserData";
 import { useState } from "react";
-
-let handleLogin = async (email: string, password: string) => {
-    let data = await Login(email, password);
-    //  catch eror envoyé par le backend si error de email ou mot de passe, afficher message d'erreur activer la div error_message
-        if (!data) {
-            const errorMessageDiv = document.getElementById("error_message");
-            if (errorMessageDiv) {
-                errorMessageDiv.classList.remove("hidden");
-            }
-            return;
-        }
-    if (data) {
-        console.log("Login successful:", data);
-
-        window.location.href = "/feed";
-    }
-
-}
+import { useNavigate, Link } from "react-router-dom";
 
 export default function LogInForm() {
       const [email, setEmail] = useState("");
       const [password, setPassword] = useState("");
+      const navigate = useNavigate();
 
+      let handleLogin = async (email: string, password: string) => {
+          let data = await Login(email, password);
+          //  catch eror envoyé par le backend si error de email ou mot de passe, afficher message d'erreur activer la div error_message
+              if (!data) {
+                  const errorMessageDiv = document.getElementById("error_message");
+                  if (errorMessageDiv) {
+                      errorMessageDiv.classList.remove("hidden");
+                  }
+                  return;
+              }
+          if (data) {
+              console.log("Login successful:", data);
+      
+              navigate("/feed");
+          }
+      
+      }
 
     return (
         <section className="flex flex-col w-full h-dvh justify-center p-15 gap-[30px] bg-light-bg">
@@ -41,7 +42,7 @@ export default function LogInForm() {
             </div>
             <div className="flex flex-row gap-2.5 text10-regular items-center justify-center">
                 <span className="text-light-text">Don't have an account?</span>
-                <a href="/signup" className="text-blue-800 ">Sign Up</a>
+                <Link to="/signup" className="text-blue-800 ">Sign Up</Link>
             </div>
             <Button text="Log in" size="lg" onClick={() => handleLogin(email, password)} />
         </section>

@@ -1,8 +1,13 @@
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic';
+import { CircleAlert, File, type LucideIcon } from 'lucide-react';
 
-//function de recherche d'icône dans la librairie lucide-react
+const iconMap: Record<string, LucideIcon> = {
+  'circle-alert': CircleAlert,
+  'file': File,
+  // Ajoute d'autres icônes ici si tu en as besoin plus tard, exemple :
+  // 'home': Home,
+};
 
-
+export type IconName = keyof typeof iconMap;
 
 interface IconProps {
   nameIcon?: IconName;
@@ -10,17 +15,20 @@ interface IconProps {
   color?: string;
 }
 
-
 export default function Icon({
   nameIcon = 'file',
   size = 24,
   color = 'currentColor',
   ...props
 }: IconProps) {
+    const LucideIconRenderer = iconMap[nameIcon];
+
+    if (!LucideIconRenderer) {
+      return null;
+    }
 
     return (
-        <DynamicIcon name={nameIcon} size={size} color={color} {...props} />
+        <LucideIconRenderer size={size} color={color} {...props} />
     );
-
 }
   
