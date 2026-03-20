@@ -23,7 +23,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('username'),
             EmailField::new('email'),
             ArrayField::new('roles'),
-            TextField::new('password')->onlyOnForms(),
+            // TextField::new('password')->onlyOnForms(),
         ];
     }
     // // Hash le mot de passe lors de la création d'un utilisateur
