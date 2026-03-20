@@ -22,6 +22,7 @@ let getAllPosts = async function() {
 
 let createPost = async function(content: string) {
     let token = localStorage.getItem('mon_token'); 
+    console.log(API_URL);
     let response = await fetch(`${API_URL}/post/create`, {
         method: "POST",
         headers: {
