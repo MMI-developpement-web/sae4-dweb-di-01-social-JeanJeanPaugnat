@@ -119,7 +119,14 @@ export default function SignUpForm() {
         <a href="/login" className="text-[#6E5DE7]">Login</a>
       </div>
 
-      <Button onClick={() => handleSignUp(username, email, password, confirmPassword)} text="Sign up" size="lg" />
+      <Button
+        onClick={() => {
+          // Use latest state values
+          handleSignUp(username, email, password, confirmPassword);
+        }}
+        text="Sign up"
+        size="lg"
+      />
     </section>
   );
 }
