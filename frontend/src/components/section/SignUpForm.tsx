@@ -29,10 +29,12 @@ function handleSignUp(username: string, email: string, password: string, confirm
   createAccount(username, email, password).then(data => {
     if (data) {
       console.log("Account created successfully:", data);
+      window.location.href = "/feed";
     }
   }).catch(error => {
     console.error("Error creating account:", error);
   });
+
 }
 
 function getPasswordStrength(password: string): StrengthLevel | null {
@@ -62,7 +64,7 @@ export default function SignUpForm() {
   const strength = getPasswordStrength(password);
 
   return (
-    <section className="flex flex-col w-md justify-center px-12.5 py-12.5 gap-7.5 bg-light-bg">
+    <section className="flex flex-col w-full h-dvh justify-center px-12.5 py-12.5 gap-7.5 bg-light-bg">
       <h2 className="title30-semi-bold">Sign Up</h2>
 
       <FormField

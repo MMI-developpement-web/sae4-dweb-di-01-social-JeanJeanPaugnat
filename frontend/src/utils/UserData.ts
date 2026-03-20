@@ -2,6 +2,7 @@
 // creation de compte, connexion, deconnexion, etc
 
 
+
 //connexion
 let UserData = {
     isLoggedIn: false,
@@ -27,7 +28,7 @@ let Login = async function(email: string, password: string) {
 
     if (!response.ok) {
         // gérer les erreurs de connexion
-        console.error("Login failed");
+        console.log("Login failed");
         return;
     }
 
