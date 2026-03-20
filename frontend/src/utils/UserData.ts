@@ -37,6 +37,26 @@ let Login = async function(email: string, password: string) {
     return data;
 };
 
+let createAccount = async function(username: string, email: string, password: string) {
+    let response = await fetch(`${API_URL}/signup`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+    });
 
-export {Login, UserData};
+    if (!response.ok) {
+        // gérer les erreurs de création de compte
+        console.error("Account creation failed");
+        return;
+    }
+
+    let data = await response.json();
+    localStorage.setItem('mon_token', data.access_token); 
+    return data;
+}
+
+
+export {Login, createAccount, UserData};
 

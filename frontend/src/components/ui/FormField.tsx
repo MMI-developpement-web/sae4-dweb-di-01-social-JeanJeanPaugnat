@@ -7,6 +7,8 @@ interface FormFieldProps {
   action?: "text" | "password" | "email";
   variant?: "default" | "secondary";
   className?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function FormField({
@@ -16,6 +18,8 @@ export default function FormField({
   action = "text",
   variant = "secondary",
   className,
+  value,
+  onChange,
 }: FormFieldProps) {
   return (
     <div className={`flex flex-col gap-2 items-start ${className ?? ""}`}>
@@ -25,7 +29,7 @@ export default function FormField({
           <span className="text12-semi-bold text-red-warning">*</span>
         )}
       </div>
-      <Input variant={variant} action={action} placeholder={placeholder} />
+      <Input variant={variant} action={action} placeholder={placeholder} value={value} onChange={onChange} />
     </div>
   );
 }
