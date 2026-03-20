@@ -3,12 +3,37 @@ import Input from "../ui/Input";
 import FormField from "../ui/FormField";
 import Button from "../ui/button";
 
+import { createAccount } from "../../utils/UserData";
+
 type StrengthLevel = {
   label: string;
   textColor: string;
   barColor: string;
   barWidth: string;
 };
+
+function validatePasswords(password: string, confirmPassword: string): boolean {
+  if (password !== confirmPassword) {
+    alert("Passwords do not match!");
+    return false;
+  }
+  return true;
+}
+
+function handleSignUp(username: string, email: string, password: string, confirmPassword: string) {
+
+  if (!validatePasswords(password, confirmPassword)) {
+    return;
+  }
+
+  createAccount(username, email, password).then(data => {
+    if (data) {
+      console.log("Account created successfully:", data);
+    }
+  }).catch(error => {
+    console.error("Error creating account:", error);
+  });
+}
 
 function getPasswordStrength(password: string): StrengthLevel | null {
   if (!password) return null;
@@ -30,49 +55,62 @@ function getPasswordStrength(password: string): StrengthLevel | null {
 }
 
 export default function SignUpForm() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const strength = getPasswordStrength(password);
 
   return (
     <section className="flex flex-col w-md justify-center px-12.5 py-12.5 gap-7.5 bg-light-bg">
       <h2 className="title30-semi-bold">Sign Up</h2>
 
-      <FormField label="Username" required placeholder="First Name" action="text" />
-      <FormField label="Email" required placeholder="Enter your email" action="email" />
+      <FormField
+        label="Username"
+        required
+        placeholder="First Name"
+        action="text"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+      />
+      <FormField
+        label="Email"
+        required
+        placeholder="Enter your email"
+        action="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+      />
 
       {/* Bloc password : header avec indicateur de force + deux champs */}
       <div className="flex flex-col gap-2 w-full">
-
         <div className="flex items-center justify-between w-full">
-
           <div className="flex items-center gap-0.5">
             <span className="text12-semi-bold text-dark-text">Password</span>
             <span className="text12-semi-bold text-red-warning">*</span>
           </div>
-
           {strength && (
             <div className="flex items-center gap-2.25">
-              <span className={`font-poppins text-[10px] ${strength.textColor}`}>
-                {strength.label}
-              </span>
+              <span className={`font-poppins text-[10px] ${strength.textColor}`}>{strength.label}</span>
               <div className="bg-[#a1a1a1] h-1.25 w-21.25 rounded-full overflow-hidden">
                 <div className={`h-full rounded-full transition-all ${strength.barColor} ${strength.barWidth}`} />
               </div>
             </div>
           )}
-          
         </div>
         <Input
           variant="secondary"
           action="password"
           placeholder="Enter your password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
         />
         <Input
           variant="secondary"
           action="password"
           placeholder="Confirm your password"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
         />
       </div>
 
@@ -81,7 +119,14 @@ export default function SignUpForm() {
         <a href="/login" className="text-[#6E5DE7]">Login</a>
       </div>
 
-      <Button text="Sign up" size="lg" />
+      <Button
+        onClick={() => {
+          // Use latest state values
+          handleSignUp(username, email, password, confirmPassword);
+        }}
+        text="Sign up"
+        size="lg"
+      />
     </section>
   );
 }
