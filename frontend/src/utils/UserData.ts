@@ -1,5 +1,5 @@
-//fichier qui va gérer les données d'utilisateur,
-// creation de compte, connexion, deconnexion, etc
+import API_URL from "./Api";
+
 
 
 //connexion
@@ -12,7 +12,6 @@ let UserData = {
     // autres données utilisateur pertinentes
 };
  
-let API_URL = "http://localhost:8080/api"; 
 
 
 let Login = async function(email: string, password: string) {
@@ -27,13 +26,13 @@ let Login = async function(email: string, password: string) {
 
     if (!response.ok) {
         // gérer les erreurs de connexion
-        console.error("Login failed");
+        console.log("Login failed");
         return;
     }
 
     let data = await response.json();
     localStorage.setItem('mon_token', data.access_token); 
-    //mise à jour données uti
+    //mise à jour données utilisateur
     return data;
 };
 

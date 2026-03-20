@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 
-import Root from './routes/Root.tsx';
 import LogIn from './routes/LogIn.tsx';
 import SignUp from './routes/SignUp.tsx';
 import CreatePost from './routes/CreatePost.tsx';
 import Feed from './routes/Feed.tsx';
+import Home from './routes/Home.tsx';
 
 import Navbar from './components/ui/Navbar.tsx';
 
@@ -17,7 +17,7 @@ import Navbar from './components/ui/Navbar.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />,
+    element: <Home />,
   },
   {
     path: '/login',
@@ -35,13 +35,14 @@ const router = createBrowserRouter([
     path: '/feed',
     element: <Feed />,
   }
-]);
+], {
+  basename: import.meta.env.BASE_URL
+});
 
 
 
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <RouterProvider router={router} />
-      <Navbar variant="default" />
     </React.StrictMode>,
   )

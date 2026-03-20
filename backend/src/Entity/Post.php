@@ -18,6 +18,7 @@ class Post
 
     #[Groups('default')]
     #[ORM\Column(type: Types::TEXT)]
+    
     private ?string $Content = null;
 
     #[Groups('default')]

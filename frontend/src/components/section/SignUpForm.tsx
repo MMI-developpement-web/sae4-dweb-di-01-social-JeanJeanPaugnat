@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../ui/Input";
 import FormField from "../ui/FormField";
 import Button from "../ui/button";
+import { useNavigate, Link } from "react-router-dom";
 
 import { createAccount } from "../../utils/UserData";
 
@@ -20,20 +21,6 @@ function validatePasswords(password: string, confirmPassword: string): boolean {
   return true;
 }
 
-function handleSignUp(username: string, email: string, password: string, confirmPassword: string) {
-
-  if (!validatePasswords(password, confirmPassword)) {
-    return;
-  }
-
-  createAccount(username, email, password).then(data => {
-    if (data) {
-      console.log("Account created successfully:", data);
-    }
-  }).catch(error => {
-    console.error("Error creating account:", error);
-  });
-}
 
 function getPasswordStrength(password: string): StrengthLevel | null {
   if (!password) return null;
@@ -60,9 +47,27 @@ export default function SignUpForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const strength = getPasswordStrength(password);
+  const navigate = useNavigate();
+
+  function handleSignUp(username: string, email: string, password: string, confirmPassword: string) {
+  
+    if (!validatePasswords(password, confirmPassword)) {
+      return;
+    }
+  
+    createAccount(username, email, password).then(data => {
+      if (data) {
+        console.log("Account created successfully:", data);
+        navigate("/feed");
+      }
+    }).catch(error => {
+      console.error("Error creating account:", error);
+    });
+  
+  }
 
   return (
-    <section className="flex flex-col w-md justify-center px-12.5 py-12.5 gap-7.5 bg-light-bg">
+    <section className="flex flex-col w-full h-dvh justify-center px-12.5 py-12.5 gap-7.5 bg-light-bg">
       <h2 className="title30-semi-bold">Sign Up</h2>
 
       <FormField
@@ -116,7 +121,7 @@ export default function SignUpForm() {
 
       <div className="flex flex-row gap-2.5 items-center justify-center text10-regular">
         <span className="text-light-text">Already have account?</span>
-        <a href="/login" className="text-[#6E5DE7]">Login</a>
+        <Link to="/login" className="text-[#6E5DE7]">Login</Link>
       </div>
 
       <Button
