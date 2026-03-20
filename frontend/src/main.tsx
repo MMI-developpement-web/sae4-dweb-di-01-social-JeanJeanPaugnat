@@ -9,6 +9,8 @@ import SignUp from './routes/SignUp.tsx';
 import CreatePost from './routes/CreatePost.tsx';
 import Feed from './routes/Feed.tsx';
 
+import Navbar from './components/ui/Navbar.tsx';
+
 // import './index.css';
 
 
@@ -40,5 +42,6 @@ const router = createBrowserRouter([
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <RouterProvider router={router} />
+      <Navbar variant="default" />
     </React.StrictMode>,
   )
