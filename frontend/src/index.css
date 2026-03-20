@@ -24,13 +24,13 @@
 
 
   /* Toutes mes tailles de polices */
-  --font-size-xsmall: 0.625rem;
-  --font-size-small: 0.750rem;
+  --font-size-xsmall: 0.875rem;
+  --font-size-small: 0.875rem;
 
-  --font-size-base: 0.875rem;
+  --font-size-base: 1rem;
 
-  --font-size-large: 1rem;
-  --font-size-xlarge: 1.125rem;
+  --font-size-large: 1.125rem;
+  --font-size-xlarge: 1.25rem;
   --font-size-xxlarge: 1.875rem;
 
 
