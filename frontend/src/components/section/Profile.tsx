@@ -1,6 +1,9 @@
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import { showMyProfile } from "../../utils/ProfileData";
+
 
 export default function Profile() {
     return (

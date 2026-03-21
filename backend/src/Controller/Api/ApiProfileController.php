@@ -17,16 +17,24 @@ use Doctrine\ORM\EntityManagerInterface;
 #[Route('/profile', name: 'profile_')]
 class ApiProfileController extends AbstractController
 {
+    #[Route('/me', name: 'profile_me', methods: ['GET'])]
+    public function showMyProfile(#[CurrentUser] ?User $user): Response 
+    {
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non connecté'], 401);
+        }
+        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'profile']);
+    }    
 
     #[Route('/{username}', name: 'profile_username', methods: ['GET'])]
     public function show(UserRepository $userRepository, string $username): Response
     {
         $user = $userRepository->findOneBy(['username' => $username]);
-        // dump($user);
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non trouvé'], 404);
         }   
         return $this->json($user, Response::HTTP_OK, [], ['groups' => 'profile']);
     }
+
 
 }
