@@ -10,6 +10,7 @@ import Feed from './routes/Feed.tsx';
 import Home from './routes/Home.tsx';
 
 import Navbar from './components/ui/Navbar.tsx';
+import ProfilePage from './routes/ProfilePage.tsx';
 
 // import './index.css';
 
@@ -34,7 +35,12 @@ const router = createBrowserRouter([
   {
     path: '/feed',
     element: <Feed />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />,
   }
+
 ], {
   basename: import.meta.env.BASE_URL
 });
