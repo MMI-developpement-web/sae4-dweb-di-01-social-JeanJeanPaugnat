@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { MoreHorizontal } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
 
@@ -40,11 +41,15 @@ export default function CardPost({
     <div className={cn(cardPostVariants({ isFirst }), className)} {...props}>
       <div className="flex items-start justify-between w-full">
         <div className="flex gap-[10px] items-center">
-          <Avatar size="sm" url={avatarUrl} />
+          <Link to={`/profile/${username}`}>
+            <Avatar size="sm" url={avatarUrl} />
+          </Link>
           <div className="flex flex-col items-start leading-normal">
-            <h3 className="font-poppins font-medium text-dark-bg text-[16px]">
-              {username}
-            </h3>
+            <Link to={`/profile/${username}`} className="hover:underline">
+              <h3 className="font-poppins font-medium text-dark-bg text-[16px]">
+                {username}
+              </h3>
+            </Link>
             <span className="font-poppins font-normal text-light-text text-[14px]">
               {timeAgo}
             </span>
