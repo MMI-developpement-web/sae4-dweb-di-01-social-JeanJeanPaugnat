@@ -11,7 +11,7 @@ import Home from './routes/Home.tsx';
 
 import Navbar from './components/ui/Navbar.tsx';
 import ProfilePage from './routes/ProfilePage.tsx';
-
+import { showMyProfile } from './utils/ProfileData.ts';
 // import './index.css';
 
 
@@ -37,8 +37,9 @@ const router = createBrowserRouter([
     element: <Feed />,
   },
   {
-    path: '/profile',
+    path: '/profile/me',
     element: <ProfilePage />,
+    loader: showMyProfile,
   }
 
 ], {

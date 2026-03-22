@@ -1,15 +1,33 @@
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal } from "lucide-react";
-import { useState } from "react";
-import { showMyProfile } from "../../utils/ProfileData";
+import { useLoaderData } from "react-router-dom";
 
+interface ProfileData {
+    username: string;
+    email: string;
+    biography: string | null;
+    location: string | null;
+    website: string | null;
+    avatar: string | null;
+    banner: string | null;
+    followers_count: number;
+    following_count: number;
+}
 
 export default function Profile() {
+    const profile = useLoaderData() as ProfileData;
+
+    const bannerStyle = profile?.banner 
+        ? { backgroundImage: `url(${profile.banner})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
+        : { backgroundColor: "#4a92a6" };
+
+    const avatarUrl = profile?.avatar || "https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg";
+
     return (
         <section className="bg-light-bg min-h-screen w-full flex flex-col pb-24">
             {/* Banner Section */}
-            <div className="w-full h-[120px] bg-[#4a92a6]"></div>
+            <div className="w-full h-[120px]" style={bannerStyle}></div>
             
             {/* Profile Info */}
             <div className="px-6 relative">
@@ -18,7 +36,7 @@ export default function Profile() {
                     <div className="w-[72px] h-[72px] rounded-full ring-4 ring-light-bg bg-white relative shrink-0">
                         {/* Profile Picture */}
                         <Avatar 
-                            url="https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg" 
+                            url={avatarUrl} 
                             size="xl" 
                         />
                     </div>
@@ -34,27 +52,30 @@ export default function Profile() {
                 {/* Info Text */}
                 <div className="flex flex-col gap-[15px]">
                     <div className="flex flex-col leading-tight">
-                        <h2 className="text-[16px] font-medium text-dark-bg">Josh Anderson</h2>
-                        <p className="text-[14px] text-[#9c9c9c]">@josh.Adrs</p>
+                        <h2 className="text-[16px] font-medium text-dark-bg">{profile?.username || "Utilisateur"}</h2>
+                        <p className="text-[14px] text-[#9c9c9c]">@{profile?.username?.toLowerCase().replace(/\s+/g,'_') || "username"}</p>
                     </div>
 
-                    <p className="text-[12px] text-[#4f4f4f] leading-relaxed tracking-wide">
-                        Please subscribe to my channel. DM me please !! <br />
-                        Supporting a small content creator matters.
+                    <p className="text-[12px] text-[#4f4f4f] leading-relaxed tracking-wide whitespace-pre-line">
+                        {profile?.biography || "Aucune biographie."}
                     </p>
 
-                    <div className="flex items-center gap-2 text-[14px] text-dark-bg">
-                        <Link2 className="w-4 h-4" />
-                        <a href="https://josh.web.fr" className="hover:underline font-medium">josh.web.fr</a>
-                    </div>
+                    {profile?.website && (
+                        <div className="flex items-center gap-2 text-[14px] text-dark-bg">
+                            <Link2 className="w-4 h-4" />
+                            <a href={(profile.website.startsWith('http') ? profile.website : `https://${profile.website}`)} target="_blank" rel="noopener noreferrer" className="hover:underline font-medium">
+                                {profile.website.replace(/^https?:\/\//,'')}
+                            </a>
+                        </div>
+                    )}
 
                     <div className="flex items-center gap-6 mt-1">
                         <div className="flex items-center gap-1.5">
-                            <span className="font-semibold text-dark-bg text-[14px]">13.1K</span>
+                            <span className="font-semibold text-dark-bg text-[14px]">{profile?.followers_count || 0}</span>
                             <span className="text-[#434343] text-[14px]">Followers</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <span className="font-semibold text-dark-bg text-[14px]">195</span>
+                            <span className="font-semibold text-dark-bg text-[14px]">{profile?.following_count || 0}</span>
                             <span className="text-[#434343] text-[14px]">Following</span>
                         </div>
                     </div>
