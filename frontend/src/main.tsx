@@ -11,7 +11,8 @@ import Home from './routes/Home.tsx';
 
 import Navbar from './components/ui/Navbar.tsx';
 import ProfilePage from './routes/ProfilePage.tsx';
-import { showMyProfile } from './utils/ProfileData.ts';
+import PublicProfilePage from './routes/PublicProfilePage.tsx';
+import { showMyProfile, showPublicProfile } from './utils/ProfileData.ts';
 // import './index.css';
 
 
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
     path: '/profile/me',
     element: <ProfilePage />,
     loader: showMyProfile,
+  },
+  {
+    path: '/profile/:username',
+    element: <PublicProfilePage />,
+    loader: showPublicProfile,
   }
 
 ], {
