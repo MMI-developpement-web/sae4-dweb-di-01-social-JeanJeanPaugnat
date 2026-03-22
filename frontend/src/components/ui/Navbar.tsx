@@ -27,7 +27,7 @@ export default function Navbar({ className, variant, ...props }: NavbarProps) {
         { icon: Home, label: "Home", href: "/feed" },
         { icon: Search, label: "Search", href: "/search" },
         { icon: PlusSquare, label: "Creation", href: "/create-post" },
-        { icon: User, label: "Profile", href: "/profile" },
+        { icon: User, label: "Profile", href: "/profile/me" },
     ];
 
     const currentVariant = variant || "default";
