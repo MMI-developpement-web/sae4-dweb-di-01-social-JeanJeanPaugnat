@@ -97,6 +97,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // --- Ajout pour EasyAdmin toggle admin ---
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles(), true);
+    }
+
+    public function setIsAdmin(bool $isAdmin): static
+    {
+        $roles = $this->getRoles();
+        if ($isAdmin && !in_array('ROLE_ADMIN', $roles, true)) {
+            $roles[] = 'ROLE_ADMIN';
+        } elseif (!$isAdmin && in_array('ROLE_ADMIN', $roles, true)) {
+            $roles = array_diff($roles, ['ROLE_ADMIN']);
+        }
+        $this->setRoles(array_values($roles));
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;

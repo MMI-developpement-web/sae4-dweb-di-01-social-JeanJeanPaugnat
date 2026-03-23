@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class UserCrudController extends AbstractCrudController
@@ -22,27 +23,43 @@ class UserCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnIndex(),
             TextField::new('username'),
             EmailField::new('email'),
-            ArrayField::new('roles'),
-            // TextField::new('password')->onlyOnForms(),
+            BooleanField::new('isAdmin', 'Admin')->renderAsSwitch(true),
+            TextField::new('biography')->hideOnIndex(),
+            TextField::new('location')->hideOnIndex(),
+            TextField::new('website')->hideOnIndex(),
+            TextField::new('avatar')->hideOnIndex(),
+            TextField::new('banner')->hideOnIndex(),
         ];
     }
-    // // Hash le mot de passe lors de la création d'un utilisateur
-    // use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-    // use Doctrine\Persistence\ObjectManager;
 
-    // public function __construct(private UserPasswordHasherInterface $passwordHasher)
-    // {
-    // }
+    // Ajout d'un getter/setter virtuel pour le toggle admin
+    // et surcharge des méthodes persistEntity/updateEntity pour gérer le rôle
+    public function persistEntity(\Doctrine\Persistence\ObjectManager $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof \App\Entity\User) {
+            $this->handleAdminRole($entityInstance);
+        }
+        parent::persistEntity($entityManager, $entityInstance);
+    }
 
-    // public function persistEntity(ObjectManager $entityManager, $entityInstance): void
-    // {
-    //     if ($entityInstance instanceof User) {
-    //         $plainPassword = $entityInstance->getPassword();
-    //         if ($plainPassword) {
-    //             $hashedPassword = $this->passwordHasher->hashPassword($entityInstance, $plainPassword);
-    //             $entityInstance->setPassword($hashedPassword);
-    //         }
-    //     }
-    //     parent::persistEntity($entityManager, $entityInstance);
-    // }
+    public function updateEntity(\Doctrine\Persistence\ObjectManager $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof \App\Entity\User) {
+            $this->handleAdminRole($entityInstance);
+        }
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    private function handleAdminRole(\App\Entity\User $user): void
+    {
+        $roles = $user->getRoles();
+        $isAdmin = $user->isAdmin();
+        if ($isAdmin && !in_array('ROLE_ADMIN', $roles)) {
+            $roles[] = 'ROLE_ADMIN';
+        } elseif (!$isAdmin && in_array('ROLE_ADMIN', $roles)) {
+            $roles = array_diff($roles, ['ROLE_ADMIN']);
+        }
+        $user->setRoles(array_values($roles));
+    }
+
 }
