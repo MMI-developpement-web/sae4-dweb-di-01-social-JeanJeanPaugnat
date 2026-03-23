@@ -23,6 +23,8 @@ interface NavbarProps
     VariantProps<typeof navbarVariants> { }
 
 export default function Navbar({ className, variant, ...props }: NavbarProps) {
+    
+    
     const navItems = [
         { icon: Home, label: "Home", href: "/feed" },
         { icon: Search, label: "Search", href: "/search" },

@@ -38,11 +38,6 @@ const router = createBrowserRouter([
     element: <Feed />,
   },
   {
-    path: '/profile/me',
-    element: <ProfilePage />,
-    loader: showMyProfile,
-  },
-  {
     path: '/profile/:username',
     element: <PublicProfilePage />,
     loader: showPublicProfile,
