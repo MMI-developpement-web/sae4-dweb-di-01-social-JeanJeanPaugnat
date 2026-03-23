@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,11 +22,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups('default')]
+    #[Groups(['default', 'profile'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups('default')]
+    #[Groups(['default', 'profile'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -37,15 +38,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?AccessToken $accessToken = null;
 
+
+
     /**
      * @var Collection<int, Post>
      */
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'user')]
     private Collection $posts;
+    
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups('profile')]
+    private ?string $biography = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('profile')]
+    private ?string $location = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('profile')]
+    private ?string $website = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('profile')]
+    private ?string $avatar = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('profile')]
+    private ?string $banner = null;
+
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'followers')]
+    #[ORM\JoinTable(name: 'subscriptions')]
+    private Collection $following;
+
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
+    private Collection $followers;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->following = new ArrayCollection();
+        $this->followers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -172,5 +204,101 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getBiography(): ?string
+    {
+        return $this->biography;
+    }
+
+    public function setBiography(?string $biography): static
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): static
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): static
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): static
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(?string $banner): static
+    {
+        $this->banner = $banner;
+
+        return $this;
+    }
+
+    public function getFollowing(): Collection
+    {
+        return $this->following;
+    }
+
+    public function getFollowers(): Collection
+    {
+        return $this->followers;
+    }
+    
+    public function setFollowing(Collection $following): static
+    {
+        $this->following = $following;
+
+        return $this;
+    }
+
+    public function setFollowers(Collection $followers): static
+    {
+        $this->followers = $followers;
+
+        return $this;
+    }
+
+    #[Groups('profile')]
+    public function getFollowersCount(): int
+    {
+        return $this->followers->count();
+    }
+
+    #[Groups('profile')]
+    public function getFollowingCount(): int
+    {
+        return $this->following->count();
     }
 }
