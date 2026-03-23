@@ -25,7 +25,6 @@ interface NavbarProps
 export default function Navbar({ className, variant, ...props }: NavbarProps) {
     
     const username = localStorage.getItem("username");
-    console.log("Username from localStorage:", username); // Debug pour vérifier la récupération du username
 
     const navItems = [
         { icon: Home, label: "Home", href: "/feed" },
