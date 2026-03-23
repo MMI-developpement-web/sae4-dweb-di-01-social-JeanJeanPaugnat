@@ -54,7 +54,7 @@ class ApiSocialController extends AbstractController
         return $this->json([
             'message' => $message,
             'isFollowing' => $isFollowing,
-            'followersCount' => $targetUser->getFollowers()->count()
+            'followers_count' => $targetUser->getFollowers()->count()
         ]);
     }
 
