@@ -16,12 +16,18 @@ use Doctrine\ORM\EntityManagerInterface;
 class ApiSocialController extends AbstractController
 {  
 
-    #[Route('/follow/{id}', name: 'toggle_follow', methods: ['POST'])]
-    public function toggleFollow(User $targetUser, #[CurrentUser] ?User $currentUser, EntityManagerInterface $em): Response
+    #[Route('/follow/{username}', name: 'toggle_follow', methods: ['POST'])]
+    public function toggleFollow(#[CurrentUser] ?User $currentUser, string $username, EntityManagerInterface $em): Response
     {
         // 1. Vérifications de sécurité
         if (!$currentUser) {
             return $this->json(['error' => 'Non connecté'], 401);
+        }
+
+        $targetUser = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$targetUser) {
+            return $this->json(['error' => 'Utilisateur non trouvé'], 404);
         }
 
         if ($currentUser === $targetUser) {

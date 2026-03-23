@@ -2,12 +2,12 @@ import API_URL from "./Api";
 
 
 
-let handleFollowToggle = async ({ params }: any) => {
-    let id = params.id;
+let handleFollowToggle = async (username: string) => {
+    console.log(username);
     let token = localStorage.getItem('mon_token');
 
     try {
-        const response = await fetch(`${API_URL}/social/follow/${id}`, {
+        const response = await fetch(`${API_URL}/social/follow/${username}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -19,10 +19,16 @@ let handleFollowToggle = async ({ params }: any) => {
             const data = await response.json();
             // Ici, tu dois mettre à jour l'état (State) de ton composant 
             // pour que le bouton change instantanément (isFollowing et followersCount)
+            console.log("Follow toggle successful:", data);
+            return {
+                isFollowing: data.isFollowing,
+                followers_count: data.followers_count
+            };
         }
     } catch (error) {
         console.error("Erreur lors de l'abonnement", error);
     }
+
 };
 
 export { handleFollowToggle}
