@@ -1,12 +1,12 @@
 import API_URL from "./Api";
 
 let getAllPosts = async function() {
-    // let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`${API_URL}/post`, {
+    let token = localStorage.getItem('mon_token'); 
+    let response = await fetch(`${API_URL}/posts`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`
         },
     });
 
