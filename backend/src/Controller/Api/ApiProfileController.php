@@ -27,13 +27,25 @@ class ApiProfileController extends AbstractController
     }    
 
     #[Route('/{username}', name: 'profile_username', methods: ['GET'])]
-    public function show(UserRepository $userRepository, string $username): Response
+    public function show(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser): Response
     {
+        
+
         $user = $userRepository->findOneBy(['username' => $username]);
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non trouvé'], 404);
-        }   
-        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'profile']);
+        }
+
+        // Vérifier si l'utilisateur courant suit ce profil
+        $isFollowing = false;
+        if ($currentUser && $currentUser !== $user) {
+            $isFollowing = $currentUser->getFollowing()->contains($user);
+        }
+
+        $isMe = ($currentUser === $user);
+
+
+        return $this->json([ 'user' => $user, 'isFollowing' => $isFollowing, 'isMe' => $isMe ], Response::HTTP_OK, [], ['groups' => 'profile']);
     }
 
 
