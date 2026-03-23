@@ -10,21 +10,29 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Service\TokenService;
 use App\Entity\Post;
 use App\Repository\PostRepository;
+use App\Entity\User;
 
 
 class ApiPostController extends AbstractController
 {
-    #[Route('/post', name: 'post_')]
-    public function home(PostRepository $postRepository): Response
+    #[Route('/posts', name: 'posts_all', methods: ['GET'])]
+    public function home(PostRepository $postRepository, #[CurrentUser] User $user, Request $request): Response
     {
-        $post = $postRepository->findAll();
-        // dump($post);
+        if (!$user) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
 
-        return $this->json($post, Response::HTTP_OK, [], ['groups' => 'default']);
+        $limit = $request->query->get('limit', 10);
+        $offset = $request->query->get('offset', 0);
+
+        $posts = $postRepository->findBy([], ['date_creation' => 'DESC'], $limit, $offset);
+
+        return $this->json($posts, Response::HTTP_OK, [], ['groups' => 'default']);
     }
+    
     //route pour créer un post
     #[Route('/post/create', name: 'post_create', methods: ['POST'])]
-    public function createPost(PostRepository $postRepository, #[CurrentUser] ?\App\Entity\User $user, Request $request): Response
+    public function createPost(PostRepository $postRepository, #[CurrentUser] User $user, Request $request): Response
     {
         if (!$user) {
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
@@ -42,6 +50,17 @@ class ApiPostController extends AbstractController
         $postRepository->save($post, true);
 
         return $this->json($post, Response::HTTP_CREATED, [], ['groups' => 'default']);
+    }
+
+    #[Route('/post/following', name: 'following', methods: ['GET'])]
+    public function following(PostRepository $postRepository, #[CurrentUser] User $user, Request $request): Response
+    {
+        $limit = $request->query->get('limit', 10);
+        $offset = $request->query->get('offset', 0);
+
+        $posts = $postRepository->findTimeline($user, $limit, $offset);
+
+        return $this->json($posts, Response::HTTP_OK, [], ['groups' => 'default']);
     }
 
 }

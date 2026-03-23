@@ -1,57 +1,83 @@
+import { useState } from "react"; // Ajout pour gérer l'état local
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
-import { Link2, MoreHorizontal, MapPin } from "lucide-react"; // Ajout de MapPin pour la localisation
+import { Link2, MoreHorizontal, MapPin } from "lucide-react";
 import { useLoaderData } from "react-router-dom";
+import { handleFollowToggle } from "../../utils/SocialData";
 
 interface ProfileData {
     user: {
+        id: number; // Important pour l'appel API
         username: string;
         biography: string | null;
         location: string | null;
         website: string | null;
         avatar: string | null;
         banner: string | null;
-        followersCount: number; // Attention au format CamelCase de Symfony
-        followingCount: number;
+        followers_count: number;
+        following_count: number;
     };
-    isMe: boolean; // Ajouté via ton contrôleur
-    isFollowing: boolean; // Ajouté via ton contrôleur
+    isMe: boolean;
+    isFollowing: boolean;
 }
 
 export default function Profile() {
-    const { user, isMe, isFollowing } = useLoaderData() as ProfileData;
+    const initialData = useLoaderData() as ProfileData;
+    console.log(initialData); 
 
-    // Gestion dynamique de la bannière
+    // On place isFollowing et le compteur dans un état pour une mise à jour fluide
+    const [followingStatus, setFollowingStatus] = useState(initialData.isFollowing);
+    const [followersCount, setFollowersCount] = useState(initialData.user.followers_count);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const { user, isMe } = initialData;
+    console.log(user.id);
+
+    // Fonction de clic pour le bouton Follow/Unfollow
+    const onFollowClick = async () => {
+        if (isLoading) return;
+
+        setIsLoading(true);
+        // Appel à ta fonction utilitaire (qui doit faire le fetch POST /api/social/follow/{id})
+            const result = await handleFollowToggle(user.username);
+            if (result) {
+                // Mise à jour de l'interface avec le retour du serveur
+                setFollowingStatus(result.isFollowing);
+                setFollowersCount(result.followers_count);
+            } else {
+                // Optionnel : afficher une notification d'erreur ici
+                console.error("Réponse du serveur vide ou invalide.");
+            }
+    };
+
     const bannerStyle = user?.banner 
         ? { backgroundImage: `url(/images/${user.banner})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
 
-    // Gestion de l'avatar (fallback sur image par défaut si null)
     const avatarUrl = user?.avatar 
         ? `/images/${user.avatar}` 
         : "https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg";
 
     return (
         <section className="bg-light-bg min-h-screen w-full flex flex-col pb-24">
-            {/* Banner Section */}
             <div className="w-full h-[120px]" style={bannerStyle}></div>
             
             <div className="px-6 relative">
-                {/* Avatar and Action Buttons */}
                 <div className="flex justify-between items-end mt-[-36px] mb-4">
                     <div className="w-[72px] h-[72px] rounded-full ring-4 ring-light-bg bg-white relative shrink-0 overflow-hidden">
                         <Avatar url={avatarUrl} size="xl" />
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        {/* ADAPTATION : Bouton dynamique selon isMe */}
                         {isMe ? (
                             <Button text="Edit Profile" variant="outline" size="md" />
                         ) : (
                             <Button 
-                                text={isFollowing ? "Unfollow" : "Follow"} 
-                                variant={isFollowing ? "outline" : "default"} 
+                                text={followingStatus ? "Unfollow" : "Follow"} 
+                                variant={followingStatus ? "outline" : "default"} 
                                 size="md" 
+                                onClick={onFollowClick} // Liaison de la fonction
+                                disabled={isLoading}    // Empêche le multi-clic
                             />
                         )}
                         
@@ -61,7 +87,6 @@ export default function Profile() {
                     </div>
                 </div>
 
-                {/* Info Text */}
                 <div className="flex flex-col gap-[15px]">
                     <div className="flex flex-col leading-tight">
                         <h2 className="text-[18px] font-bold text-dark-bg">{user?.username}</h2>
@@ -91,18 +116,16 @@ export default function Profile() {
 
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-1">
-                            <span className="font-bold text-dark-bg">{user?.followersCount || 0}</span>
+                            <span className="font-bold text-dark-bg">{followersCount}</span>
                             <span className="text-[#656565]">Followers</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <span className="font-bold text-dark-bg">{user?.followingCount || 0}</span>
+                            <span className="font-bold text-dark-bg">{user?.following_count || 0}</span>
                             <span className="text-[#656565]">Following</span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            {/*tweets plus tard */}
         </section>
     );
 }

@@ -3,25 +3,26 @@ import Input from "../ui/Input";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { createPost } from "../../utils/PostData";
+import { useNavigate, Link } from "react-router-dom";
 
 const MAX_CHARS = 280;
 
-// Fonction pour gérer la publication du post
-const handlePublish = async (content: string) => {
-    if (content.length > MAX_CHARS) {
-        alert("Your post exceeds the maximum character limit.");
-        return;
-    }
-    let data = await createPost(content);
-    if (data) {
-        console.log("Post created successfully:", data);
-        
-    }
-};
-
 export default function CreatePost() {
     const [text, setText] = useState("");
+    const navigate = useNavigate();
     const remaining = MAX_CHARS - text.length;
+
+    const handlePublish = async (content: string) => {
+        if (content.length > MAX_CHARS) {
+            alert("Your post exceeds the maximum character limit.");
+            return;
+        }
+        let data = await createPost(content);
+        if (data) {
+            console.log("Post created successfully:", data);
+            navigate("/feed");
+        }
+    };
 
     return (
         <section className="bg-light-bg rounded-t-[26px] overflow-hidden w-full h-dvh">
