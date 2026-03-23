@@ -1,8 +1,8 @@
 import API_URL from "./Api";
 
-let getAllPosts = async function() {
+let getAllPosts = async function(limit: number, offset: number) {
     let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`${API_URL}/posts`, {
+    let response = await fetch(`${API_URL}/posts?limit=${limit}&offset=${offset}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
