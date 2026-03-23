@@ -19,11 +19,11 @@ class Post
     #[Groups('default')]
     #[ORM\Column(type: Types::TEXT)]
     
-    private ?string $Content = null;
+    private ?string $content = null;
 
     #[Groups('default')]
     #[ORM\Column]
-    private ?\DateTime $Date_creation = null;
+    private ?\DateTime $date_creation = null;
 
     #[Groups('default')]
     #[ORM\ManyToOne(inversedBy: 'posts')]
@@ -36,24 +36,24 @@ class Post
 
     public function getContent(): ?string
     {
-        return $this->Content;
+        return $this->content;
     }
 
-    public function setContent(string $Content): static
+    public function setContent(string $content): static
     {
-        $this->Content = $Content;
+        $this->content = $content;
 
         return $this;
     }
 
     public function getDateCreation(): ?\DateTime
     {
-        return $this->Date_creation;
+        return $this->date_creation;
     }
 
-    public function setDateCreation(\DateTime $Date_creation): static
+    public function setDateCreation(\DateTime $date_creation): static
     {
-        $this->Date_creation = $Date_creation;
+        $this->date_creation = $date_creation;
 
         return $this;
     }
