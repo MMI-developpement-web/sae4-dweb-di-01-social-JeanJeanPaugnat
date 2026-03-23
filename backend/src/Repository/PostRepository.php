@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
 
 /**
  * @extends ServiceEntityRepository<Post>
@@ -33,6 +34,20 @@ class PostRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findTimeline(User $user, int $limit, int $offset)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.user IN (:following)') // Tweets des abonnements [cite: 279]
+            ->setParameter('following', $user->getFollowing())
+            ->orderBy('t.date_creation', 'DESC')    // Du plus récent au plus ancien [cite: 282]
+            ->setMaxResults($limit)             // LIMIT
+            ->setFirstResult($offset)           // OFFSET
+            ->getQuery()
+            ->getResult();
+    }
+
+    
 
 //    /**
 //     * @return Post[] Returns an array of Post objects
