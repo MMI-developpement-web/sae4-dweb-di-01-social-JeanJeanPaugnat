@@ -3,11 +3,11 @@ import API_URL from "./Api";
 
 
 let handleFollowToggle = async ({ params }: any) => {
-    let username = params.username;
+    let id = params.id;
     let token = localStorage.getItem('mon_token');
 
     try {
-        const response = await fetch(`${API_URL}/social/follow/${username}`, {
+        const response = await fetch(`${API_URL}/social/follow/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
