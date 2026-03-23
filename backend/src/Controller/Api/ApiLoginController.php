@@ -36,6 +36,7 @@ class ApiLoginController extends AbstractController
             'access_token' => $token->getValue(),
             'user_id' => $user->getId(),
             'email' => $user->getEmail(),
+            'username' => $user->getUsername(),
         ]);
     }
 

@@ -9,13 +9,12 @@ let UserData = {
     email: "",
     password: "",
     token: "",
-    // autres données utilisateur pertinentes
+    // autres données utilisateur
 };
  
 
 
 let Login = async function(email: string, password: string) {
-    //  requete  backend vérifier identifiants
     let response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
@@ -25,14 +24,15 @@ let Login = async function(email: string, password: string) {
     });
 
     if (!response.ok) {
-        // gérer les erreurs de connexion
+
         console.log("Login failed");
         return;
     }
 
     let data = await response.json();
     localStorage.setItem('mon_token', data.access_token); 
-    //mise à jour données utilisateur
+    localStorage.setItem('username', data.username);
+
     return data;
 };
 

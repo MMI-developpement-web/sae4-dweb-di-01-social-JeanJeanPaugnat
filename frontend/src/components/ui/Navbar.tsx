@@ -24,12 +24,14 @@ interface NavbarProps
 
 export default function Navbar({ className, variant, ...props }: NavbarProps) {
     
-    
+    const username = localStorage.getItem("username");
+    console.log("Username from localStorage:", username); // Debug pour vérifier la récupération du username
+
     const navItems = [
         { icon: Home, label: "Home", href: "/feed" },
         { icon: Search, label: "Search", href: "/search" },
         { icon: PlusSquare, label: "Creation", href: "/create-post" },
-        { icon: User, label: "Profile", href: "/profile/me" },
+        { icon: User, label: "Profile", href: `/profile/${username}` },
     ];
 
     const currentVariant = variant || "default";
