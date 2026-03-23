@@ -19,6 +19,25 @@ let getAllPosts = async function(limit: number, offset: number) {
     return data;
 }
 
+let getFollowingPosts = async function(limit: number, offset: number) {
+    let token = localStorage.getItem('mon_token'); 
+    let response = await fetch(`${API_URL}/post/following?limit=${limit}&offset=${offset}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to fetch following posts");
+        return;
+    }
+
+    let data = await response.json();
+    return data;
+}
+
 
 let createPost = async function(content: string) {
     let token = localStorage.getItem('mon_token'); 
@@ -41,4 +60,4 @@ let createPost = async function(content: string) {
     return data;
 };
 
-export { createPost, getAllPosts };  
+export { createPost, getAllPosts, getFollowingPosts };  

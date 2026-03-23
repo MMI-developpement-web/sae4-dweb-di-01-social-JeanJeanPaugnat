@@ -1,6 +1,6 @@
 import CardPost from '../ui/CardPost';
 import { useEffect, useState, useCallback, useRef } from "react";
-import { getAllPosts } from "../../utils/PostData";
+import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 
 interface Post {
     id: number;
@@ -14,6 +14,7 @@ interface Post {
 
 
 export default function Feed() {
+    const [view, setView] = useState<'for-you' | 'following'>('for-you');
     const [posts, setPosts] = useState<Post[]>([]);
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -23,7 +24,18 @@ export default function Feed() {
     // On garde trace du dernier offset chargé pour éviter les doublons
     const lastFetchedOffset = useRef<number | null>(null);
 
-    const fetchPosts = useCallback(async (currentOffset: number) => {
+    // Fonction de réinitialisation lors du changement d'onglet
+    const switchView = (newView: 'for-you' | 'following') => {
+        if (newView === view) return;
+        
+        setView(newView);
+        setPosts([]); // On vide la liste actuelle
+        setOffset(0); // On repart du début
+        setHasMore(true);
+        lastFetchedOffset.current = null;
+    };
+
+    const fetchPosts = useCallback(async (currentOffset: number, currentView: string) => {
         // VERROU : Si on est déjà en train de charger cet offset, on stop
         if (loading || !hasMore || lastFetchedOffset.current === currentOffset) return;
 
@@ -31,7 +43,9 @@ export default function Feed() {
         setLoading(true);
 
         try {
-            const newData = await getAllPosts(LIMIT, currentOffset);
+            // Choix dynamique de la fonction utilitaire selon l'onglet
+            const fetcher = currentView === 'for-you' ? getAllPosts : getFollowingPosts;
+            const newData = await fetcher(LIMIT, currentOffset);
             
             if (newData.length < LIMIT) {
                 setHasMore(false);
@@ -48,8 +62,8 @@ export default function Feed() {
 
     // Chargement déclenché par le changement d'offset
     useEffect(() => {
-        fetchPosts(offset);
-    }, [offset, fetchPosts]);
+        fetchPosts(offset, view);
+    }, [offset, view, fetchPosts]);
 
     // Détection du scroll
     useEffect(() => {
@@ -86,13 +100,13 @@ export default function Feed() {
     return (
         <div className="flex flex-col items-center pt-28">
             <div className='flex flex-row gap-8 mb-6'>
-                <h2 className="text-2xl font-bold ">For you</h2>
-                <h2 className="text-2xl font-bold text-gray-400 cursor-pointer">Following</h2>
+                <h2 onClick={() => switchView('for-you')} className="text-2xl font-bold text-gray-400 hover:text-black focus:text-black">For you</h2>
+                <h2 onClick={() => switchView('following')} className="text-2xl font-bold text-gray-400 hover:text-black focus:text-black">Following</h2>
             </div>
             
             {posts.map((post) => (
                 <CardPost
-                    key={post.id}
+                    key={`${view}-${post.id}`}
                     isFirst={false}
                     username={post.user.username}
                     avatarUrl=""
