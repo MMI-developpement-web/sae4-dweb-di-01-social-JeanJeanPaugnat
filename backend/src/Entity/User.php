@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\Post;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -73,11 +74,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
     private Collection $followers;
 
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'likedBy')]
+    #[ORM\JoinTable(name: 'user_likes')]
+    private Collection $likes;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->followers = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -338,4 +344,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(Collection $likes): static
+    {
+        $this->likes = $likes;
+
+        return $this;
+    }
+
+    public function addLike(Post $post): static
+    {
+        if (!$this->likes->contains($post)) {
+            $this->likes->add($post);
+            $post->getLikedBy()->add($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Post $post): static
+    {
+        if ($this->likes->removeElement($post)) {
+            $post->getLikedBy()->removeElement($this);
+        }
+
+        return $this;
+    }
+
 }
