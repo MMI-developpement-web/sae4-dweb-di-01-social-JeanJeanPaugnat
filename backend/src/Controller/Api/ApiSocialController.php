@@ -59,7 +59,7 @@ class ApiSocialController extends AbstractController
         ]);
     }
 
-    #[Route('/like/{postId}', name: 'toggle_like', methods: ['POST'])]
+    #[Route('/like/{post}', name: 'toggle_like', methods: ['POST'])]
     public function toggleLike(Post $post, #[CurrentUser] ?User $user, EntityManagerInterface $em): Response
     {
         // 1. Vérifications de sécurité

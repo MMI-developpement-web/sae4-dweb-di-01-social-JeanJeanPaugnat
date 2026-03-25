@@ -32,6 +32,7 @@ class Post
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $user = null;
 
+
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
     private Collection $likedBy;
 
@@ -82,6 +83,7 @@ class Post
         return $this->likedBy;
     }
 
+    #[Groups('default')]
     public function getLikesCount(): int
     {
         return $this->likedBy->count();
