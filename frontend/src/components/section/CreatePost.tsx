@@ -17,11 +17,17 @@ export default function CreatePost() {
             alert("Your post exceeds the maximum character limit.");
             return;
         }
-        let data = await createPost(content);
-        if (data) {
-            console.log("Post created successfully:", data);
-            navigate("/feed");
+        if ( content.length > 0){
+            let data = await createPost(content);
+                if (data) {
+                    console.log("Post created successfully:", data);
+                    navigate("/feed");
+                }
+        }else{
+            alert("Your post cannot be empty.");
         }
+        
+
     };
 
     return (

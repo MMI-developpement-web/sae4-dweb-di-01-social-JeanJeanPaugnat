@@ -10,6 +10,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Service\TokenService;
 
 use App\Entity\User;
+use App\Entity\Post;
 use Doctrine\ORM\EntityManagerInterface;
 
 #[Route('/social', name: 'social_')]
@@ -58,5 +59,27 @@ class ApiSocialController extends AbstractController
         ]);
     }
 
+    #[Route('/like/{post}', name: 'toggle_like', methods: ['POST'])]
+    public function toggleLike(Post $post, #[CurrentUser] ?User $user, EntityManagerInterface $em): Response
+    {
+        // 1. Vérifications de sécurité
+        if (!$user) {
+            return $this->json(['error' => 'Non connecté'], 401);   
+        }
 
+        if ($user->getLikes()->contains($post)) {
+            $user->removeLike($post);
+            $liked = false;
+        } else {
+            $user->addLike($post);
+            $liked = true;
+        }
+
+        $em->flush(); // Sauvegarde en base 
+
+        return $this->json([
+            'is_liked' => $liked,
+            'likes_count' => $post->getLikedBy()->count() // On renvoie le nouveau total [cite: 313]
+        ]);
+    }
 }

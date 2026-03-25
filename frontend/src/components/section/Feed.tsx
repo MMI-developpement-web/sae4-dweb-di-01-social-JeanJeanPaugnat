@@ -10,6 +10,8 @@ interface Post {
         username: string;
         email: string;
     };
+    likes_count: number;
+    is_liked: boolean;
 }
 
 
@@ -107,11 +109,14 @@ export default function Feed() {
             {posts.map((post) => (
                 <CardPost
                     key={`${view}-${post.id}`}
+                    postId={post.id}
                     isFirst={false}
                     username={post.user.username}
                     avatarUrl=""
                     timeAgo={getTimeAgo(post.date_creation)}
                     content={post.content}
+                    likesCount={post.likes_count}
+                    is_liked={post.is_liked}
                 />
             ))}
 

@@ -5,7 +5,10 @@ namespace App\Entity;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -28,6 +31,13 @@ class Post
     #[Groups('default')]
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $user = null;
+
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
+    private Collection $likedBy;
+
+    private bool $isLiked = false;
+
 
     public function getId(): ?int
     {
@@ -66,6 +76,30 @@ class Post
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getLikedBy(): Collection
+    {
+        return $this->likedBy;
+    }
+
+    #[Groups('default')]
+    public function getLikesCount(): int
+    {
+        return $this->likedBy->count();
+    }
+
+    #[Groups('default')]
+    public function getIsLiked(): bool
+    {
+        return $this->isLiked;
+    }
+
+    public function setIsLiked(bool $isLiked): static
+    {
+        $this->isLiked = $isLiked;
 
         return $this;
     }
