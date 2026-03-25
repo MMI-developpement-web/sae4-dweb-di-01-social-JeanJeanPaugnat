@@ -32,9 +32,9 @@ let handleFollowToggle = async (username: string) => {
 };
 
 
-let handleLikeData = async function(postId: number) {
+let handleLikeToggle = async function(postId: number) {
     let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`${API_URL}/post/like/${postId}`, {
+    let response = await fetch(`${API_URL}/social/like/${postId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -51,4 +51,4 @@ let handleLikeData = async function(postId: number) {
     return data;
 };
 
-export { handleFollowToggle, handleLikeData };
+export { handleFollowToggle, handleLikeToggle };
