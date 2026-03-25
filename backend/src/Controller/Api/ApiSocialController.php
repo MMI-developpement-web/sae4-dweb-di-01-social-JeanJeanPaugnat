@@ -78,8 +78,8 @@ class ApiSocialController extends AbstractController
         $em->flush(); // Sauvegarde en base 
 
         return $this->json([
-            'liked' => $liked,
-            'count' => $post->getLikedBy()->count() // On renvoie le nouveau total [cite: 313]
+            'is_liked' => $liked,
+            'likes_count' => $post->getLikedBy()->count() // On renvoie le nouveau total [cite: 313]
         ]);
     }
 }

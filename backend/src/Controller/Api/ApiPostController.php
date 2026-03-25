@@ -27,6 +27,14 @@ class ApiPostController extends AbstractController
 
         $posts = $postRepository->findBy([], ['date_creation' => 'DESC'], $limit, $offset);
 
+        foreach ($posts as $post) {
+            if ($user && $post->getLikedBy()->contains($user)) {
+            $post->setIsLiked(true); // On active le flag pour le JSON
+        } else {
+            $post->setIsLiked(false);
+        }
+        }
+
         return $this->json($posts, Response::HTTP_OK, [], ['groups' => 'default']);
     }
     

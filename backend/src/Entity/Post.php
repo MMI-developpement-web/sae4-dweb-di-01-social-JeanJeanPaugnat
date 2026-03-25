@@ -36,6 +36,8 @@ class Post
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
     private Collection $likedBy;
 
+    private bool $isLiked = false;
+
 
     public function getId(): ?int
     {
@@ -87,5 +89,18 @@ class Post
     public function getLikesCount(): int
     {
         return $this->likedBy->count();
+    }
+
+    #[Groups('default')]
+    public function getIsLiked(): bool
+    {
+        return $this->isLiked;
+    }
+
+    public function setIsLiked(bool $isLiked): static
+    {
+        $this->isLiked = $isLiked;
+
+        return $this;
     }
 }
