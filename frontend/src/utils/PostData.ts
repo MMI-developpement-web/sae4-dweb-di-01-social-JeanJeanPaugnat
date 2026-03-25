@@ -60,4 +60,5 @@ let createPost = async function(content: string) {
     return data;
 };
 
+
 export { createPost, getAllPosts, getFollowingPosts };  

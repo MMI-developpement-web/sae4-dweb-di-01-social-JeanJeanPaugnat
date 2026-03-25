@@ -31,4 +31,24 @@ let handleFollowToggle = async (username: string) => {
 
 };
 
-export { handleFollowToggle}
+
+let handleLikeData = async function(postId: number) {
+    let token = localStorage.getItem('mon_token'); 
+    let response = await fetch(`${API_URL}/post/like/${postId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to toggle like");
+        return;
+    }
+
+    let data = await response.json();
+    return data;
+};
+
+export { handleFollowToggle, handleLikeData };
