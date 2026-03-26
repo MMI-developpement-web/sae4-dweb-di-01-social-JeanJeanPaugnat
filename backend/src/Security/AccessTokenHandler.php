@@ -29,18 +29,15 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
             throw new BadCredentialsException('Invalid token.');
         }
 
+        $user = $token->getUser();
 
 
         // Si vous avez hashé le token en base, il faudrait le hacher ici avant de le comparer.
         // if ($hashedToken !== $token->getValue()) { ... } 
         // Mais pour l'instant, on suppose que le token est stocké en clair (comme l'énoncé)
         
-        // 2. Récupérer l'utilisateur
-        $user = $token->getUser();
         
-        if (!$user || $user->getIsBlocked()) {
-            throw new CustomUserMessageAuthenticationException('Votre compte a été suspendu pour non-respect des conditions.');
-        }
+        
         // 3. Retourner un UserBadge avec l'identifiant de l'utilisateur.
         // !!! IMPORTANT : Utilisez la propriété qui identifie l'utilisateur dans votre provider (généralement l'email)
         return new UserBadge($user->getEmail());

@@ -16,7 +16,7 @@ class ApiLoginController extends AbstractController
 {
     #[Route('/login', name: 'login', methods: ['POST'], format: 'json')]
     public function login(
-        #[CurrentUser()] User $user,
+        #[CurrentUser()] ?User $user,
         TokenService $tokenService,
     ): Response
     {
@@ -24,6 +24,12 @@ class ApiLoginController extends AbstractController
         if (null === $user) {
             // Si l'utilisateur n'est pas authentifié, on retourne une erreur 401
             return $this->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($user->getIsBlocked()) {
+            return $this->json([
+                'error' => 'Votre compte est suspendu pour non-respect des conditions d’utilisation.'
+            ], Response::HTTP_FORBIDDEN); // 403 Forbidden est le code HTTP correct ici
         }
 
         // Si on arrive ici, c'est que l'authentification a réussi (grâce à json_login dans security.yaml)
