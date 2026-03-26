@@ -31,3 +31,5 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-user');
     }
 }
+
+

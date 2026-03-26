@@ -6,7 +6,6 @@ use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -23,7 +22,11 @@ class UserCrudController extends AbstractCrudController
             IdField::new('id')->onlyOnIndex(),
             TextField::new('username'),
             EmailField::new('email'),
-            BooleanField::new('isAdmin', 'Admin')->renderAsSwitch(true),
+            BooleanField::new('isAdmin', 'Compte Admin')
+                ->renderAsSwitch(true),
+            BooleanField::new('isBlocked', 'Compte Bloqué')
+                ->renderAsSwitch(true)
+                ->setHelp('Un utilisateur bloqué ne peut plus se connecter.'),
             TextField::new('biography')->hideOnIndex(),
             TextField::new('location')->hideOnIndex(),
             TextField::new('website')->hideOnIndex(),

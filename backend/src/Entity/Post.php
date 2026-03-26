@@ -45,6 +45,9 @@ class Post
 
     public function getContent(): ?string
     {
+        if ($this->user && $this->user->getIsBlocked()) {
+            return "Ce compte a été bloqué pour non-respect des conditions d’utilisation.";
+        }
         return $this->content;
     }
 
