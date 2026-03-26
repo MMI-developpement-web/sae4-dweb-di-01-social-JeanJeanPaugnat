@@ -1,9 +1,10 @@
 import { useState } from "react"; // Ajout pour gérer l'état local
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
-import { Link2, MoreHorizontal, MapPin } from "lucide-react";
-import { useLoaderData } from "react-router-dom";
+import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { handleFollowToggle } from "../../utils/SocialData";
+import { logout } from "../../utils/UserData";
 
 interface ProfileData {
     user: {
@@ -29,6 +30,8 @@ export default function Profile() {
     const [followingStatus, setFollowingStatus] = useState(initialData.isFollowing);
     const [followersCount, setFollowersCount] = useState(initialData.user.followers_count);
     const [isLoading, setIsLoading] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
 
     const { user, isMe } = initialData;
     console.log(user.id);
@@ -50,6 +53,15 @@ export default function Profile() {
             }
     };
 
+    const handleLogout = async () => {
+        if(window.confirm("Are you sure you want to disconnect?")) {
+            await logout();
+            navigate("/login");
+        }
+        
+    }
+    
+
     const bannerStyle = user?.banner 
         ? { backgroundImage: `url(/images/${user.banner})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
@@ -68,7 +80,7 @@ export default function Profile() {
                         <Avatar url={avatarUrl} size="xl" />
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center mt-12 gap-2">
                         {isMe ? (
                             <Button text="Edit Profile" variant="outline" size="md" />
                         ) : (
@@ -81,11 +93,23 @@ export default function Profile() {
                             />
                         )}
                         
-                        <button className="border-[1.5px] border-dark-bg h-[35px] w-[35px] flex items-center justify-center rounded-lg hover:bg-black/5 transition-colors">
+                        <button onClick={() => setShowMenu(!showMenu)} className="border-[1.5px] border-dark-bg h-[35px] w-[35px] flex items-center justify-center rounded-lg hover:bg-black/5 transition-colors">
                             <MoreHorizontal className="w-5 h-5 text-dark-bg" />
                         </button>
                     </div>
+                    
                 </div>
+                {showMenu && (
+                        <div className="absolute right-6 mt-[-10px] w-fit bg-white rounded-lg z-10 px-1 py-1">
+                            <button 
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 text-dark-bg w-full p-2 hover:bg-black/5 rounded"
+                            >
+                                <Unplug size={16} />
+                                Disconnect
+                            </button>
+                        </div>
+                    )}
 
                 <div className="flex flex-col gap-[15px]">
                     <div className="flex flex-col leading-tight">
