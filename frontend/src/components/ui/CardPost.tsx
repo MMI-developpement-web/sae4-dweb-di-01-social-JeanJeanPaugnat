@@ -1,13 +1,14 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { MoreHorizontal, Heart } from "lucide-react";
+import { MoreHorizontal, Heart, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
 import { useState } from "react";
 import { handleLikeToggle } from "../../utils/SocialData";
+import { deletePost } from "../../utils/PostData";
 
 const cardPostVariants = cva(
-  "bg-light-bg border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
+  "bg-light-bg relative border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
   {
     variants: {
       isFirst: {
@@ -31,6 +32,7 @@ export interface CardPostProps
   postId: number; 
   likesCount?: number; 
   is_liked?: boolean;
+  onDeleteSuccess?: (postId: number) => void; // Callback pour notifier la suppression réussie
 }
 
 export default function CardPost({
@@ -43,10 +45,12 @@ export default function CardPost({
   content,
   likesCount,
   is_liked,
+  onDeleteSuccess,
   ...props
 }: CardPostProps) {
     const [liked, setLiked] = useState(is_liked);
     const [count, setCount] = useState(likesCount);
+    const [showMenu, setShowMenu] = useState(false);
 
     const onLikeClick = async () => {
         const result = await handleLikeToggle(postId);
@@ -56,6 +60,16 @@ export default function CardPost({
             setCount(result.likes_count);
         } else {
             console.error("Réponse du serveur vide ou invalide.");
+        }
+    };
+
+    const handleDelete = async () => {
+        if (window.confirm("Voulez-vous vraiment supprimer ce tweet ?")) { // 
+            const success = await deletePost(postId);
+            if (success) {
+                // Notifier le composant parent (Feed) pour retirer le tweet de la liste
+                onDeleteSuccess?.(postId);
+            }
         }
     };
 
@@ -77,7 +91,7 @@ export default function CardPost({
             </span>
           </div>
         </div>
-        <button className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors">
+        <button onClick={() => setShowMenu(!showMenu)} className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors">
           <MoreHorizontal className="size-5 text-light-text" />
         </button>
       </div>
@@ -94,6 +108,17 @@ export default function CardPost({
                 </button>
                 <span className="text-sm text-gray-600">{count}</span>
             </div>
+            {showMenu && (
+                <div className="absolute right-6 mt-7 w-fit bg-white border rounded-lg shadow-lg z-10 px-1 py-1">
+                    <button 
+                        onClick={handleDelete}
+                        className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"
+                    >
+                        <Trash2 size={16} />
+                        Delete Post
+                    </button>
+                </div>
+            )}
     </div>
   );
 }

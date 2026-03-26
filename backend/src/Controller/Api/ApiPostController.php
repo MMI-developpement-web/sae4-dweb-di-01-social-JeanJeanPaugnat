@@ -71,4 +71,21 @@ class ApiPostController extends AbstractController
         return $this->json($posts, Response::HTTP_OK, [], ['groups' => 'default']);
     }
 
+    #[Route('/post/delete/{id}', name: 'post_delete', methods: ['DELETE'])]
+    public function deletePost(PostRepository $postRepository, #[CurrentUser] User $user, int $id): Response
+    {
+        $post = $postRepository->find($id);
+        if (!$post) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($post->getUser() !== $user) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $postRepository->remove($post, true);
+
+        return $this->json(['message' => 'Post deleted successfully'], Response::HTTP_OK);
+    }
+
 }
