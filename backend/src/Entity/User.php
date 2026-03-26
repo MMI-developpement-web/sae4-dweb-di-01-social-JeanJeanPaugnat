@@ -78,6 +78,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'user_likes')]
     private Collection $likes;
 
+    #[ORM\Column(options: ["default" => false])]
+    #[Groups(['admin_read', 'profile'])]
+    private bool $isBlocked = false;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -376,4 +380,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getIsBlocked(): bool
+    {
+        return $this->isBlocked;
+    }
+
+    public function setIsBlocked(bool $isBlocked): static
+    {
+        $this->isBlocked = $isBlocked;
+
+        return $this;
+    }
 }
