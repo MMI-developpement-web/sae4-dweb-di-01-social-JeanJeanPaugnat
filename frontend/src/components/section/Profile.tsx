@@ -1,10 +1,12 @@
-import { useState } from "react"; // Ajout pour gérer l'état local
+import { useCallback, useState } from "react"; // Ajout pour gérer l'état local
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { handleFollowToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
+import CardPost from '../ui/CardPost';
+import { getTimeAgo } from "../../utils/TimeAgo";
 
 interface ProfileData {
     user: {
@@ -18,13 +20,13 @@ interface ProfileData {
         followers_count: number;
         following_count: number;
     };
+    posts: any[]; 
     isMe: boolean;
     isFollowing: boolean;
 }
 
 export default function Profile() {
     const initialData = useLoaderData() as ProfileData;
-    console.log(initialData); 
 
     // On place isFollowing et le compteur dans un état pour une mise à jour fluide
     const [followingStatus, setFollowingStatus] = useState(initialData.isFollowing);
@@ -32,10 +34,15 @@ export default function Profile() {
     const [isLoading, setIsLoading] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
+    const [posts, setPosts] = useState(initialData.posts || []);
 
     const { user, isMe } = initialData;
     console.log(user.id);
 
+    const handleRemovePost = useCallback((postId: number) => {
+        setPosts((prev) => prev.filter(p => p.id !== postId));
+    }, []);
+    
     // Fonction de clic pour le bouton Follow/Unfollow
     const onFollowClick = async () => {
         if (isLoading) return;
@@ -148,6 +155,30 @@ export default function Profile() {
                             <span className="text-[#656565]">Following</span>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="flex flex-col w-full max-w-2xl mx-auto px-4 border-t border-gray-100 pt-6">
+
+
+                <div className="flex flex-col items-center">
+                    {posts.length > 0 ? (
+                        posts.map((post: any) => (
+                            <CardPost 
+                                key={post.id}
+                                postId={post.id}
+                                content={post.content}
+                                username={post.user?.username || user.username}
+                                is_liked={post.isLiked}
+                                likesCount={post.likesCount}
+                                timeAgo={getTimeAgo(post.date_creation)}
+                                onDeleteSuccess={handleRemovePost}
+                            />
+                        ))
+                    ) : (
+                        <div className="flex flex-col items-center py-10 text-gray-400">
+                            <p>No posts yet.</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>
