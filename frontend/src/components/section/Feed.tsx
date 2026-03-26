@@ -2,6 +2,8 @@ import CardPost from '../ui/CardPost';
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 import { getTimeAgo } from "../../utils/TimeAgo";
+import { RefreshCw } from "lucide-react";
+import Button from '../ui/button';
 
 interface Post {
     id: number;
@@ -22,6 +24,7 @@ export default function Feed() {
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [autoRefresh, setAutoRefresh] = useState(false);
     const LIMIT = 10;
     
     // On garde trace du dernier offset chargé pour éviter les doublons
@@ -31,15 +34,19 @@ export default function Feed() {
         setPosts((prevPosts) => prevPosts.filter(post => post.id !== postId));
     };
 
+    const refresh = useCallback(() => {
+        setPosts([]); // On vide pour recharger du haut
+        setOffset(0); // On revient au début
+        setHasMore(true);
+        lastFetchedOffset.current = null;
+        // Le useEffect suivant se chargera d'appeler fetchPosts car offset change
+    }, []);
+
     // Fonction de réinitialisation lors du changement d'onglet
     const switchView = (newView: 'for-you' | 'following') => {
         if (newView === view) return;
-        
         setView(newView);
-        setPosts([]); // On vide la liste actuelle
-        setOffset(0); // On repart du début
-        setHasMore(true);
-        lastFetchedOffset.current = null;
+        refresh();
     };
 
     const fetchPosts = useCallback(async (currentOffset: number, currentView: string) => {
@@ -58,7 +65,7 @@ export default function Feed() {
                 setHasMore(false);
             }
 
-            setPosts(prev => [...prev, ...newData]);
+            setPosts(prev => currentOffset === 0 ? newData : [...prev, ...newData]);
         } catch (error) {
             console.error("Error fetching posts:", error);
             lastFetchedOffset.current = null; // Réinitialise en cas d'erreur
@@ -66,6 +73,20 @@ export default function Feed() {
             setLoading(false);
         }
     }, [loading, hasMore]); // On enlève offset des dépendances du useCallback
+
+    useEffect(() => {
+        let interval: number;
+        if (autoRefresh) {
+            interval = setInterval(() => {
+                console.log("Auto-refreshing...");
+                refresh();
+            }, 30000);
+        }
+        return () => { if (interval) {
+            clearInterval(interval);
+        }
+    };
+    }, [autoRefresh, refresh]);
 
     // Chargement déclenché par le changement d'offset
     useEffect(() => {
@@ -90,29 +111,55 @@ export default function Feed() {
 
 
     return (
-        <div className="flex flex-col items-center pt-28">
-            <div className='flex flex-row gap-8 mb-6'>
-                <h2 onClick={() => switchView('for-you')} className="text-2xl font-bold text-gray-400 hover:text-black focus:text-black">For you</h2>
-                <h2 onClick={() => switchView('following')} className="text-2xl font-bold text-gray-400 hover:text-black focus:text-black">Following</h2>
+        <div className="flex flex-col items-center pt-28 pb-10">
+            {/* Navigation et Options */}
+            <div className='flex flex-col items-center gap-4 mb-8 w-full max-w-2xl'>
+                <div className='flex flex-row gap-8'>
+                    <h2 onClick={() => switchView('for-you')} className={`text-2xl font-bold cursor-pointer ${view === 'for-you' ? 'text-black' : 'text-gray-400'}`}>For you</h2>
+                    <h2 onClick={() => switchView('following')} className={`text-2xl font-bold cursor-pointer ${view === 'following' ? 'text-black' : 'text-gray-400'}`}>Following</h2>
+                </div>
+
+                <div className="flex items-center gap-6 w-full justify-between px-4">
+                    <Button 
+                        variant="default"
+                        size="md"
+                        onClick={refresh}
+                        text='Refresh'
+                        >
+                        </Button>
+
+
+                    <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            checked={autoRefresh} 
+                            onChange={() => setAutoRefresh(!autoRefresh)}
+                            className="accent-black"
+                        />
+                        Auto-refresh
+                    </label>
+                </div>
             </div>
             
-            {posts.map((post) => (
-                <CardPost
-                    key={`${view}-${post.id}`}
-                    postId={post.id}
-                    isFirst={false}
-                    username={post.user.username}
-                    avatarUrl=""
-                    timeAgo={getTimeAgo(post.date_creation)}
-                    content={post.content}
-                    onDeleteSuccess={handleRemovePost}
-                    likesCount={post.likes_count}
-                    is_liked={post.is_liked}
-                />
-            ))}
+            <div className="w-full max-w-2xl flex items-center flex-col">
+                {posts.map((post) => (
+                    <CardPost
+                        key={`${view}-${post.id}`}
+                        postId={post.id}
+                        isFirst={false}
+                        username={post.user.username}
+                        avatarUrl=""
+                        timeAgo={getTimeAgo(post.date_creation)}
+                        content={post.content}
+                        onDeleteSuccess={handleRemovePost}
+                        likesCount={post.likes_count}
+                        is_liked={post.is_liked}
+                    />
+                ))}
+            </div>
 
             {loading && <p className="mt-4 text-gray-500 italic">Chargement des posts...</p>}
-            {!hasMore && <p className="mt-4 text-gray-400">Vous avez vu tous les tweets !</p>}
+            {!hasMore && posts.length > 0 && <p className="mt-10 text-gray-400 font-medium">Vous avez vu tout les posts !</p>}
         </div>
     );
 }
