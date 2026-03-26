@@ -26,6 +26,10 @@ export default function Feed() {
     // On garde trace du dernier offset chargé pour éviter les doublons
     const lastFetchedOffset = useRef<number | null>(null);
 
+    const handleRemovePost = (postId: number) => {
+        setPosts((prevPosts) => prevPosts.filter(post => post.id !== postId));
+    };
+
     // Fonction de réinitialisation lors du changement d'onglet
     const switchView = (newView: 'for-you' | 'following') => {
         if (newView === view) return;
@@ -115,6 +119,7 @@ export default function Feed() {
                     avatarUrl=""
                     timeAgo={getTimeAgo(post.date_creation)}
                     content={post.content}
+                    onDeleteSuccess={handleRemovePost}
                     likesCount={post.likes_count}
                     is_liked={post.is_liked}
                 />
