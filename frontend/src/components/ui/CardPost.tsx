@@ -109,7 +109,7 @@ export default function CardPost({
                 <span className="text-sm text-gray-600">{count}</span>
             </div>
             {showMenu && (
-                <div className="absolute right-6 mt-7 w-fit bg-white border rounded-lg shadow-lg z-10 px-1 py-1">
+                <div className="absolute right-6 mt-7 w-fit bg-white rounded-lg z-10 px-1 py-1">
                     <button 
                         onClick={handleDelete}
                         className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"

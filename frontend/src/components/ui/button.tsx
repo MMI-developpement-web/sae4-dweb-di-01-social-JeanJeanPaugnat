@@ -11,18 +11,19 @@ import type { IconName } from "./Icon";
 // - icon: nom d'icône lucide (optionnel), affiche l'icône avant le texte; si pas de texte = icon-only
 
 const ButtonVariants = cva(
-  "inline-flex items-center justify-center gap-[4px] rounded-[8px] cursor-pointer font-poppins font-medium transition-opacity hover:opacity-80",
+  "inline-flex items-center justify-center gap-[4px] rounded-[8px] cursor-pointer font-poppins font-medium transition-opacity hover:opacity-80 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
         default: "bg-dark-bg text-white",
         outline: "border-dark-bg text-dark-text bg-transparent",
         warning: "bg-red-warning text-white",
+        simple: "hover:bg-black/5 transition-colors text-light-text",
       },
       size: {
-        md: "px-[16px] py-[6px] h-[30px] p12-medium",
+        md: "px-[16px] py-[6px] h-[35px] p12-medium",
         lg: "px-[20px] py-[12px] h-[55px] w-full title18-medium",
-        icon: "size-[32px] p-0",
+        icon: "size-[32px] p-0 fill-current",
       },
     },
     compoundVariants: [
@@ -38,6 +39,7 @@ const ButtonVariants = cva(
     },
   },
 );
+
 
 interface ButtonDataProps {
   text?: string;
