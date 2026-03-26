@@ -41,7 +41,6 @@ let getFollowingPosts = async function(limit: number, offset: number) {
 
 let createPost = async function(content: string) {
     let token = localStorage.getItem('mon_token'); 
-    console.log(API_URL);
     let response = await fetch(`${API_URL}/post/create`, {
         method: "POST",
         headers: {
@@ -60,5 +59,24 @@ let createPost = async function(content: string) {
     return data;
 };
 
+let deletePost = async function(postId: number) {
+    let token = localStorage.getItem('mon_token'); 
+    let response = await fetch(`${API_URL}/post/delete/${postId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
 
-export { createPost, getAllPosts, getFollowingPosts };  
+    if (!response.ok) {
+        console.error("Failed to delete post");
+        return false;
+    }
+
+    let data = await response.json();
+    return data;
+
+}
+
+export { createPost, getAllPosts, getFollowingPosts, deletePost };
