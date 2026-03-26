@@ -32,7 +32,6 @@ class Post
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $user = null;
 
-
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
     private Collection $likedBy;
 

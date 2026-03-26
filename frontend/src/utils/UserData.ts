@@ -56,6 +56,18 @@ let createAccount = async function(username: string, email: string, password: st
     return data;
 }
 
+let logout = async function() {
+    await fetch(`${API_URL}/logout`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('mon_token')}`
+        },
+    });
+    localStorage.removeItem('mon_token');
+    localStorage.removeItem('username');
+}
 
-export {Login, createAccount, UserData};
+
+export {Login, createAccount, logout, UserData};
 

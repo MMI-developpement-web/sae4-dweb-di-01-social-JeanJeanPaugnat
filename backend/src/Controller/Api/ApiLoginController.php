@@ -74,4 +74,10 @@ class ApiLoginController extends AbstractController
             'email' => $user->getEmail(),
         ], Response::HTTP_CREATED);
     }
+
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(): Response
+    {
+        return $this->json(['message' => 'Logged out successfully']);
+    }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Service\TokenService;
 
 use App\Entity\User;
+use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,13 +20,28 @@ class ApiProfileController extends AbstractController
 {  
 
     #[Route('/{username}', name: 'profile_username', methods: ['GET'])]
-    public function show(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser): Response
+    public function show(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser, PostRepository $postRepository, Request $request): Response
     {
         
 
         $user = $userRepository->findOneBy(['username' => $username]);
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non trouvé'], 404);
+        }
+        
+        // On récupère les paramètres de pagination depuis l'URL (ex: ?limit=10&offset=0)
+        $limit = $request->query->getInt('limit', 10);
+        $offset = $request->query->getInt('offset', 0);
+
+        $posts = $postRepository->findBy(
+            ['user' => $user], 
+            ['date_creation' => 'DESC'],
+            $limit,
+            $offset
+        );
+
+        foreach ($posts as $post) {
+            $post->setIsLiked($currentUser ? $post->getLikedBy()->contains($currentUser) : false);
         }
 
         // Vérifier si l'utilisateur courant suit ce profil
@@ -37,7 +53,7 @@ class ApiProfileController extends AbstractController
         $isMe = ($currentUser === $user);
 
 
-        return $this->json([ 'user' => $user, 'isFollowing' => $isFollowing, 'isMe' => $isMe ], Response::HTTP_OK, [], ['groups' => 'profile']);
+        return $this->json([ 'user' => $user, 'posts' => $posts, 'isFollowing' => $isFollowing, 'isMe' => $isMe ], Response::HTTP_OK, [], ['groups' => ['profile', 'default']]);
     }
 
 
