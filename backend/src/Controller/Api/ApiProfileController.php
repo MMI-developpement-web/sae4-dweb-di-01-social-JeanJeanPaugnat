@@ -12,8 +12,9 @@ use App\Service\TokenService;
 use App\Entity\User;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
-use App\Service\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Dto\UpdateProfilePayload;
+use App\Service\ProfileService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 #[Route('/profile', name: 'profile_')]
 class ApiProfileController extends AbstractController
@@ -56,5 +57,34 @@ class ApiProfileController extends AbstractController
         return $this->json([ 'user' => $user, 'posts' => $posts, 'isFollowing' => $isFollowing, 'isMe' => $isMe ], Response::HTTP_OK, [], ['groups' => ['profile', 'default']]);
     }
 
+    #[Route('/update', name: 'update', methods: ['POST'])]
+    public function update(Request $request, #[CurrentUser] ?User $currentUser, ProfileService $profileService): Response
+    {
+        if (!$currentUser) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
 
+        $data = $request->request->all();
+        if (empty($data)) {
+            return $this->json(['error' => 'No data provided'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $avatar = $request->files->get('avatar');
+        $banner = $request->files->get('banner');
+
+        $payload = new UpdateProfilePayload();
+        $payload->biography = $data['biography'] ?? null;
+        $payload->website = $data['website'] ?? null;
+        $payload->location = $data['location'] ?? null;
+        if ($avatar) {
+            $payload->setAvatar($avatar);
+        }
+        if ($banner) {
+            $payload->setBanner($banner);
+        }
+
+        $profileService->update($currentUser, $payload);
+
+        return $this->json(['message' => 'Profile updated successfully'], Response::HTTP_OK);
+    }
 }
