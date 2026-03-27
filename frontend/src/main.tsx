@@ -11,7 +11,8 @@ import Home from './routes/Home.tsx';
 
 import Navbar from './components/ui/Navbar.tsx';
 import ProfilePage from './routes/ProfilePage.tsx';
-import { showPublicProfile } from './utils/ProfileData.ts';
+import EditProfilePage from './routes/EditProfilePage.tsx';
+import { showPublicProfile, showMyProfile } from './utils/ProfileData.ts';
 // import './index.css';
 
 
@@ -37,10 +38,15 @@ const router = createBrowserRouter([
     element: <Feed />,
   },
   {
+    path: '/profile/edit',
+    element: <EditProfilePage />,
+    loader: showMyProfile,
+  },
+  {
     path: '/profile/:username',
     element: <ProfilePage />,
     loader: showPublicProfile,
-  }
+  },
 
 ], {
   basename: import.meta.env.BASE_URL
