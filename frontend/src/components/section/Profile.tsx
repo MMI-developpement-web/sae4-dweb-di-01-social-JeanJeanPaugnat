@@ -89,7 +89,7 @@ export default function Profile() {
                     
                     <div className="flex items-center mt-12 gap-2">
                         {isMe ? (
-                            <Button text="Edit Profile" variant="outline" size="md" />
+                            <Button text="Edit Profile" variant="outline" size="md" onClick={() => navigate('/profile/edit')} />
                         ) : (
                             <Button 
                                 text={followingStatus ? "Unfollow" : "Follow"} 
