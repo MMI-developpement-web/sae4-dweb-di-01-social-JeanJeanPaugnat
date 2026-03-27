@@ -25,8 +25,8 @@ let Login = async function(email: string, password: string) {
 
     if (!response.ok) {
 
-        console.log("Login failed");
-        return;
+        let data = await response.json();
+        return data;
     }
 
     let data = await response.json();
