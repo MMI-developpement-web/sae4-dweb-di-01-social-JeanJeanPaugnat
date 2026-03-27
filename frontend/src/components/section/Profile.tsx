@@ -3,6 +3,7 @@ import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { imageUrl } from "../../utils/Api";
 import { handleFollowToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
 import CardPost from '../ui/CardPost';
@@ -70,11 +71,11 @@ export default function Profile() {
     
 
     const bannerStyle = user?.banner 
-        ? { backgroundImage: `url(/images/${user.banner})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
+        ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
 
     const avatarUrl = user?.avatar 
-        ? `/images/${user.avatar}` 
+        ? imageUrl(user.avatar) 
         : "https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg";
 
     return (

@@ -6,6 +6,7 @@ import Button from "../ui/button";
 import FormField from "../ui/FormField";
 import Input from "../ui/Input";
 import { modifyProfile } from "../../utils/ProfileData";
+import { imageUrl } from "../../utils/Api";
 
 interface ProfileData {
     user: {
@@ -32,8 +33,8 @@ export default function EditProfile() {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [bannerFile, setBannerFile] = useState<File | null>(null);
 
-    const [avatarPreview, setAvatarPreview] = useState(user?.avatar ? `/images/${user.avatar}` : undefined);
-    const [bannerPreview, setBannerPreview] = useState(user?.banner ? `/images/${user.banner}` : undefined);
+    const [avatarPreview, setAvatarPreview] = useState(user?.avatar ? imageUrl(user.avatar) : undefined);
+    const [bannerPreview, setBannerPreview] = useState(user?.banner ? imageUrl(user.banner) : undefined);
 
     const bannerInputRef = useRef<HTMLInputElement>(null);
 
