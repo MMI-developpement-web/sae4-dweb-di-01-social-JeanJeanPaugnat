@@ -22,5 +22,31 @@ let showPublicProfile = async function({ params }: any) {
     return data;
 };
 
+let showMyProfile = async function() {
+    const username = localStorage.getItem('username');
+    if (!username) return null;
+    return showPublicProfile({ params: { username } });
+};
 
-export { showPublicProfile };
+let modifyProfile = async function(formData: FormData) {
+    let token = localStorage.getItem('mon_token');
+
+    let response = await fetch(`${API_URL}/profile/update`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token || ''}`
+        },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        console.error("Failed to modify profile");
+        return;
+    }
+
+    let data = await response.json();
+    return data;
+};
+
+
+export { showPublicProfile, showMyProfile, modifyProfile };
