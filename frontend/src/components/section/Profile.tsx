@@ -169,6 +169,7 @@ export default function Profile() {
                                 postId={post.id}
                                 content={post.content}
                                 username={post.user?.username || user.username}
+                                avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
                                 is_liked={post.isLiked}
                                 likesCount={post.likesCount}
                                 timeAgo={getTimeAgo(post.date_creation)}

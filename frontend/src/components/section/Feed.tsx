@@ -1,4 +1,5 @@
 import CardPost from '../ui/CardPost';
+import { imageUrl } from '../../utils/Api';
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 import { getTimeAgo } from "../../utils/TimeAgo";
@@ -12,6 +13,7 @@ interface Post {
     user: {
         username: string;
         email: string;
+        avatar: string | null;
     };
     likes_count: number;
     is_liked: boolean;
@@ -148,7 +150,7 @@ export default function Feed() {
                         postId={post.id}
                         isFirst={false}
                         username={post.user.username}
-                        avatarUrl=""
+                        avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
                         timeAgo={getTimeAgo(post.date_creation)}
                         content={post.content}
                         onDeleteSuccess={handleRemovePost}
