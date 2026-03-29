@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"; // Ajout pour gérer l'état local
+import { useCallback, useEffect, useState } from "react"; // Ajout pour gérer l'état local
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
@@ -39,6 +39,12 @@ export default function Profile() {
 
     const { user, isMe } = initialData;
     console.log(user.id);
+
+    useEffect(() => {
+        setPosts(initialData.posts || []);
+        setFollowingStatus(initialData.isFollowing);
+        setFollowersCount(initialData.user.followers_count);
+    }, [initialData]);
 
     const handleRemovePost = useCallback((postId: number) => {
         setPosts((prev) => prev.filter(p => p.id !== postId));
