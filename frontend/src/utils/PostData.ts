@@ -39,16 +39,35 @@ let getFollowingPosts = async function(limit: number, offset: number) {
 }
 
 
-let createPost = async function(content: string) {
-    let token = localStorage.getItem('mon_token'); 
-    let response = await fetch(`${API_URL}/post/create`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ content }),
-    });
+let createPost = async function(content: string, mediaFiles?: File[]) {
+    let token = localStorage.getItem('mon_token');
+
+    let response: globalThis.Response;
+
+    if (mediaFiles && mediaFiles.length > 0) {
+        // Envoi multipart/form-data pour inclure les fichiers
+        const formData = new FormData();
+        formData.append('content', content);
+        mediaFiles.forEach(file => formData.append('media[]', file));
+
+        response = await fetch(`${API_URL}/post/create`, {
+            method: "POST",
+            headers: {
+                // Pas de Content-Type ici : le navigateur le gère avec le boundary
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData,
+        });
+    } else {
+        response = await fetch(`${API_URL}/post/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ content }),
+        });
+    }
 
     if (!response.ok) {
         console.error("Failed to create post");
