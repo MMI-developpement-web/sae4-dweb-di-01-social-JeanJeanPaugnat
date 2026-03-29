@@ -1,4 +1,5 @@
 import CardPost from '../ui/CardPost';
+import { imageUrl } from '../../utils/Api';
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 import { getTimeAgo } from "../../utils/TimeAgo";
@@ -12,6 +13,7 @@ interface Post {
     user: {
         username: string;
         email: string;
+        avatar: string | null;
     };
     likes_count: number;
     is_liked: boolean;
@@ -25,6 +27,7 @@ export default function Feed() {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [autoRefresh, setAutoRefresh] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
     const LIMIT = 10;
     
     // On garde trace du dernier offset chargé pour éviter les doublons
@@ -39,7 +42,7 @@ export default function Feed() {
         setOffset(0); // On revient au début
         setHasMore(true);
         lastFetchedOffset.current = null;
-        // Le useEffect suivant se chargera d'appeler fetchPosts car offset change
+        setRefreshKey(k => k + 1); // Force le re-déclenchement même si offset était déjà 0
     }, []);
 
     // Fonction de réinitialisation lors du changement d'onglet
@@ -88,10 +91,10 @@ export default function Feed() {
     };
     }, [autoRefresh, refresh]);
 
-    // Chargement déclenché par le changement d'offset
+    // Chargement déclenché par le changement d'offset ou de refreshKey
     useEffect(() => {
         fetchPosts(offset, view);
-    }, [offset, view, fetchPosts]);
+    }, [offset, view, fetchPosts, refreshKey]);
 
     // Détection du scroll
     useEffect(() => {
@@ -148,7 +151,7 @@ export default function Feed() {
                         postId={post.id}
                         isFirst={false}
                         username={post.user.username}
-                        avatarUrl=""
+                        avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
                         timeAgo={getTimeAgo(post.date_creation)}
                         content={post.content}
                         onDeleteSuccess={handleRemovePost}

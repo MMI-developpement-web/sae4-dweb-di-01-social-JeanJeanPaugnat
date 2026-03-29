@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react"; // Ajout pour gérer l'état local
+import { useCallback, useEffect, useState } from "react"; // Ajout pour gérer l'état local
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { imageUrl } from "../../utils/Api";
 import { handleFollowToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
 import CardPost from '../ui/CardPost';
@@ -39,6 +40,12 @@ export default function Profile() {
     const { user, isMe } = initialData;
     console.log(user.id);
 
+    useEffect(() => {
+        setPosts(initialData.posts || []);
+        setFollowingStatus(initialData.isFollowing);
+        setFollowersCount(initialData.user.followers_count);
+    }, [initialData]);
+
     const handleRemovePost = useCallback((postId: number) => {
         setPosts((prev) => prev.filter(p => p.id !== postId));
     }, []);
@@ -70,11 +77,11 @@ export default function Profile() {
     
 
     const bannerStyle = user?.banner 
-        ? { backgroundImage: `url(/images/${user.banner})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
+        ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
 
     const avatarUrl = user?.avatar 
-        ? `/images/${user.avatar}` 
+        ? imageUrl(user.avatar) 
         : "https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg";
 
     return (
@@ -89,7 +96,7 @@ export default function Profile() {
                     
                     <div className="flex items-center mt-12 gap-2">
                         {isMe ? (
-                            <Button text="Edit Profile" variant="outline" size="md" />
+                            <Button text="Edit Profile" variant="outline" size="md" onClick={() => navigate('/profile/edit')} />
                         ) : (
                             <Button 
                                 text={followingStatus ? "Unfollow" : "Follow"} 
@@ -168,6 +175,7 @@ export default function Profile() {
                                 postId={post.id}
                                 content={post.content}
                                 username={post.user?.username || user.username}
+                                avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
                                 is_liked={post.isLiked}
                                 likesCount={post.likesCount}
                                 timeAgo={getTimeAgo(post.date_creation)}

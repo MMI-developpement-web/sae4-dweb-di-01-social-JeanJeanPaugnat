@@ -22,6 +22,7 @@ function App() {
           </div>
           <CreatePost />
           <CardPost
+            postId={2}
             isFirst={true}
             username="John Doe"
             avatarUrl="/path/to/avatar.jpg"

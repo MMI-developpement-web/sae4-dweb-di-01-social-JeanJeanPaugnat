@@ -14,10 +14,15 @@ export default function LogInForm() {
       let handleLogin = async (email: string, password: string) => {
           let data = await Login(email, password);
           //  catch eror envoyé par le backend si error de email ou mot de passe, afficher message d'erreur activer la div error_message
-              if (!data) {
+              if (data && data.error) {
+                console.log(data.error);
                   const errorMessageDiv = document.getElementById("error_message");
                   if (errorMessageDiv) {
                       errorMessageDiv.classList.remove("hidden");
+                      const errorText = errorMessageDiv.querySelector("#error_text");
+                      if (errorText) {
+                          errorText.textContent = data.error;
+                      }
                   }
                   return;
               }
@@ -38,7 +43,7 @@ export default function LogInForm() {
         onChange={e => setPassword(e.target.value)}/>
             <div id="error_message" className="hidden flex flex-row items-center justify-center gap-[8px] text10-regular ">
                 <Icon nameIcon="circle-alert" size={18} color='#F22D2D' />
-                <span className="text-red-warning text12-regular">Incorrect email or password</span>
+                <span id="error_text" className="text-red-warning text12-regular"></span>
             </div>
             <div className="flex flex-row gap-2.5 text10-regular items-center justify-center">
                 <span className="text-light-text">Don't have an account?</span>

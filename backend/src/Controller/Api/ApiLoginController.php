@@ -23,12 +23,12 @@ class ApiLoginController extends AbstractController
 
         if (null === $user) {
             // Si l'utilisateur n'est pas authentifié, on retourne une erreur 401
-            return $this->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+            return $this->json(['error' => 'password or email incorrect'], Response::HTTP_UNAUTHORIZED);
         }
 
         if ($user->getIsBlocked()) {
             return $this->json([
-                'error' => 'Votre compte est suspendu pour non-respect des conditions d’utilisation.'
+                'error' => 'Your account has been suspended for violating the terms of use.'
             ], Response::HTTP_FORBIDDEN); // 403 Forbidden est le code HTTP correct ici
         }
 
