@@ -32,6 +32,10 @@ class Post
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $user = null;
 
+    #[Groups('default')]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $media = [];
+
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
     private Collection $likedBy;
 
@@ -102,6 +106,18 @@ class Post
     public function setIsLiked(bool $isLiked): static
     {
         $this->isLiked = $isLiked;
+
+        return $this;
+    }
+
+    public function getMedia(): ?array
+    {
+        return $this->media ?? [];
+    }
+
+    public function setMedia(?array $media): static
+    {
+        $this->media = $media;
 
         return $this;
     }
