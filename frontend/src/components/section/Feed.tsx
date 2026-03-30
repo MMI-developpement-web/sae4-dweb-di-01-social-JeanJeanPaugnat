@@ -15,6 +15,7 @@ interface Post {
         email: string;
         avatar: string | null;
     };
+    media?: string[];
     likes_count: number;
     is_liked: boolean;
 }
@@ -157,6 +158,7 @@ export default function Feed() {
                         onDeleteSuccess={handleRemovePost}
                         likesCount={post.likes_count}
                         is_liked={post.is_liked}
+                        media={post.media ?? []}
                     />
                 ))}
             </div>
