@@ -21,21 +21,40 @@ class ApiProfileController extends AbstractController
 {  
 
     #[Route('/{username}', name: 'profile_username', methods: ['GET'])]
-    public function show(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser, PostRepository $postRepository, Request $request): Response
+    public function show(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser): Response
     {
-        
-
         $user = $userRepository->findOneBy(['username' => $username]);
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non trouvé'], 404);
         }
-        
-        // On récupère les paramètres de pagination depuis l'URL (ex: ?limit=10&offset=0)
+
+        $isFollowing = false;
+        if ($currentUser && $currentUser !== $user) {
+            $isFollowing = $currentUser->getFollowing()->contains($user);
+        }
+
+        $isMe = ($currentUser === $user);
+
+        return $this->json([
+            'user' => $user,
+            'isFollowing' => $isFollowing,
+            'isMe' => $isMe,
+        ], Response::HTTP_OK, [], ['groups' => ['profile']]);
+    }
+
+    #[Route('/{username}/posts', name: 'profile_posts', methods: ['GET'])]
+    public function posts(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser, PostRepository $postRepository, Request $request): Response
+    {
+        $user = $userRepository->findOneBy(['username' => $username]);
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non trouvé'], 404);
+        }
+
         $limit = $request->query->getInt('limit', 10);
         $offset = $request->query->getInt('offset', 0);
 
         $posts = $postRepository->findBy(
-            ['user' => $user], 
+            ['user' => $user, 'parent' => null],
             ['date_creation' => 'DESC'],
             $limit,
             $offset
@@ -45,16 +64,7 @@ class ApiProfileController extends AbstractController
             $post->setIsLiked($currentUser ? $post->getLikedBy()->contains($currentUser) : false);
         }
 
-        // Vérifier si l'utilisateur courant suit ce profil
-        $isFollowing = false;
-        if ($currentUser && $currentUser !== $user) {
-            $isFollowing = $currentUser->getFollowing()->contains($user);
-        }
-
-        $isMe = ($currentUser === $user);
-
-
-        return $this->json([ 'user' => $user, 'posts' => $posts, 'isFollowing' => $isFollowing, 'isMe' => $isMe ], Response::HTTP_OK, [], ['groups' => ['profile', 'default']]);
+        return $this->json($posts, Response::HTTP_OK, [], ['groups' => ['default']]);
     }
 
     #[Route('/update', name: 'update', methods: ['POST'])]
