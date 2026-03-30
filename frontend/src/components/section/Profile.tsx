@@ -178,6 +178,7 @@ export default function Profile() {
                                 avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
                                 is_liked={post.isLiked}
                                 likesCount={post.likesCount}
+                                repliesCount={post.repliesCount}
                                 timeAgo={getTimeAgo(post.date_creation)}
                                 onDeleteSuccess={handleRemovePost}
                                 media={post.media ?? []}

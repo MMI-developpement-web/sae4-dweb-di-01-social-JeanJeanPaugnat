@@ -17,6 +17,7 @@ interface Post {
     };
     media?: string[];
     likes_count: number;
+    replies_count: number;
     is_liked: boolean;
 }
 
@@ -157,6 +158,7 @@ export default function Feed() {
                         content={post.content}
                         onDeleteSuccess={handleRemovePost}
                         likesCount={post.likes_count}
+                        repliesCount={post.replies_count}
                         is_liked={post.is_liked}
                         media={post.media ?? []}
                     />
