@@ -106,4 +106,52 @@ class ApiPostController extends AbstractController
         return $this->json(['message' => 'Post deleted successfully'], Response::HTTP_OK);
     }
 
+    #[Route('/post/{id}', name: 'post_get', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function getPost(PostRepository $postRepository, #[CurrentUser] User $user, int $id): Response
+    {
+        $post = $postRepository->find($id);
+        if (!$post) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($post->getLikedBy()->contains($user)) {
+            $post->setIsLiked(true);
+        } else {
+            $post->setIsLiked(false);
+        }
+
+        return $this->json($post, Response::HTTP_OK, [], ['groups' => 'default']);
+    }
+
+    #[Route('/post/edit/{id}', name: 'post_edit', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function editPost(PostRepository $postRepository, #[CurrentUser] User $user, Request $request, MediaUploadService $mediaUpload, int $id): Response
+    {
+        $post = $postRepository->find($id);
+        if (!$post) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($post->getUser() !== $user) {
+            return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $content = $request->request->get('content', $post->getContent());
+        $keepMedia = $request->request->all('keepMedia') ?? [];
+
+        $newFiles = $request->files->get('media', []);
+        if (!is_array($newFiles)) {
+            $newFiles = [$newFiles];
+        }
+
+        $post->setContent($content);
+
+        $newPaths = $mediaUpload->uploadMany($newFiles);
+        $finalMedia = array_merge($keepMedia, $newPaths);
+        $post->setMedia($finalMedia ?: null);
+
+        $postRepository->save($post, true);
+
+        return $this->json($post, Response::HTTP_OK, [], ['groups' => 'default']);
+    }
+
 }

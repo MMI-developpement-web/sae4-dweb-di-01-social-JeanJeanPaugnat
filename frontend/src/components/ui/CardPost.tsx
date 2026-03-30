@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { MoreHorizontal, Heart, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { MoreHorizontal, Heart, Trash2, Brush } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
 import { useState } from "react";
@@ -54,6 +54,7 @@ export default function CardPost({
     const [liked, setLiked] = useState(is_liked);
     const [count, setCount] = useState(likesCount);
     const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
 
     const onLikeClick = async () => {
         const result = await handleLikeToggle(postId);
@@ -104,6 +105,7 @@ export default function CardPost({
       {media && media.length > 0 && (
         <MediaCarousel media={media} />
       )}
+      <div className="">
           <div className="flex items-center gap-2 mt-2">
                 <button onClick={onLikeClick} className="transition-colors">
                     {liked ? (
@@ -114,6 +116,13 @@ export default function CardPost({
                 </button>
                 <span className="text-sm text-gray-600">{count}</span>
             </div>
+            {/* <div className="">
+              <button  >
+
+              </button>
+            </div> */}
+      </div>
+          
             {showMenu && (
                 <div className="absolute right-6 mt-7 w-fit bg-white rounded-lg z-10 px-1 py-1">
                     <button 
@@ -122,6 +131,13 @@ export default function CardPost({
                     >
                         <Trash2 size={16} />
                         Delete Post
+                    </button>
+                    <button
+                        onClick={() => { setShowMenu(false); navigate(`/edit-post/${postId}`); }}
+                        className="flex items-center gap-2 text-dark-text w-full p-2 hover:bg-black/5 transition-colors rounded"
+                    >
+                        <Brush size={16} />
+                        Edit Post
                     </button>
                 </div>
             )}

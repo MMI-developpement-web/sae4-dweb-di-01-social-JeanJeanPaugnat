@@ -98,4 +98,46 @@ let deletePost = async function(postId: number) {
 
 }
 
-export { createPost, getAllPosts, getFollowingPosts, deletePost };
+let getPost = async function(postId: number) {
+    let token = localStorage.getItem('mon_token');
+    let response = await fetch(`${API_URL}/post/${postId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to fetch post");
+        return null;
+    }
+
+    return await response.json();
+};
+
+let updatePost = async function(postId: number, content: string, newFiles: File[], keepMedia: string[]) {
+    let token = localStorage.getItem('mon_token');
+
+    const formData = new FormData();
+    formData.append('content', content);
+    keepMedia.forEach(m => formData.append('keepMedia[]', m));
+    newFiles.forEach(file => formData.append('media[]', file));
+
+    let response = await fetch(`${API_URL}/post/edit/${postId}`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        console.error("Failed to update post");
+        return null;
+    }
+
+    return await response.json();
+};
+
+export { createPost, getAllPosts, getFollowingPosts, deletePost, getPost, updatePost };
