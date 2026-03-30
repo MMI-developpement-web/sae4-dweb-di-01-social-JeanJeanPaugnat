@@ -67,6 +67,7 @@ export default function CardPost({
     const [repliesLoaded, setRepliesLoaded] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+    const isOwner = localStorage.getItem('username') === username;
 
     const onLikeClick = async () => {
         const result = await handleLikeToggle(postId);
@@ -129,7 +130,7 @@ export default function CardPost({
           </div>
         </div>
         <button onClick={() => setShowMenu(!showMenu)} className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors">
-          <MoreHorizontal className="size-5 text-light-text" />
+          {isOwner && <MoreHorizontal className="size-5 text-light-text" />}
         </button>
       </div>
       <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
