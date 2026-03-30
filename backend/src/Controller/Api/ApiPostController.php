@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use App\Service\TokenService;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Entity\User;
+use App\Service\MediaUploadService;
 
 
 class ApiPostController extends AbstractController
@@ -40,21 +40,39 @@ class ApiPostController extends AbstractController
     
     //route pour créer un post
     #[Route('/post/create', name: 'post_create', methods: ['POST'])]
-    public function createPost(PostRepository $postRepository, #[CurrentUser] User $user, Request $request): Response
+    public function createPost(PostRepository $postRepository, #[CurrentUser] User $user, Request $request, MediaUploadService $mediaUpload): Response
     {
         if (!$user) {
             return $this->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $data = json_decode($request->getContent(), true);
-        if (!$data || !isset($data['content'])) {
+        // Supporte multipart/form-data (avec fichiers) et application/json (sans)
+        if (str_contains($request->headers->get('Content-Type', ''), 'multipart/form-data')) {
+            $content = $request->request->get('content', '');
+        } else {
+            $data = json_decode($request->getContent(), true);
+            $content = $data['content'] ?? '';
+        }
+
+        $files = $request->files->get('media', []);
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+
+        if ($content === '' && empty($files)) {
             return $this->json(['error' => 'Missing content'], Response::HTTP_BAD_REQUEST);
         }
 
         $post = new Post();
-        $post->setContent($data['content']);
+        $post->setContent($content);
         $post->setDateCreation(new \DateTime());
         $post->setUser($user);
+
+        $mediaPaths = $mediaUpload->uploadMany($files);
+        if (!empty($mediaPaths)) {
+            $post->setMedia($mediaPaths);
+        }
+
         $postRepository->save($post, true);
 
         return $this->json($post, Response::HTTP_CREATED, [], ['groups' => 'default']);

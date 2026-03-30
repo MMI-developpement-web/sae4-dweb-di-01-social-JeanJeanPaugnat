@@ -180,6 +180,7 @@ export default function Profile() {
                                 likesCount={post.likesCount}
                                 timeAgo={getTimeAgo(post.date_creation)}
                                 onDeleteSuccess={handleRemovePost}
+                                media={post.media ?? []}
                             />
                         ))
                     ) : (

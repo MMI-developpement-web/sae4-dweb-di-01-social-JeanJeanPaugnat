@@ -6,6 +6,7 @@ import Avatar from "./Avatar";
 import { useState } from "react";
 import { handleLikeToggle } from "../../utils/SocialData";
 import { deletePost } from "../../utils/PostData";
+import MediaCarousel from "./MediaCarousel";
 
 const cardPostVariants = cva(
   "bg-light-bg relative border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
@@ -32,6 +33,7 @@ export interface CardPostProps
   postId: number; 
   likesCount?: number; 
   is_liked?: boolean;
+  media?: string[];
   onDeleteSuccess?: (postId: number) => void; // Callback pour notifier la suppression réussie
 }
 
@@ -45,6 +47,7 @@ export default function CardPost({
   content,
   likesCount,
   is_liked,
+  media,
   onDeleteSuccess,
   ...props
 }: CardPostProps) {
@@ -98,6 +101,9 @@ export default function CardPost({
       <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
         {content}
       </p>
+      {media && media.length > 0 && (
+        <MediaCarousel media={media} />
+      )}
           <div className="flex items-center gap-2 mt-2">
                 <button onClick={onLikeClick} className="transition-colors">
                     {liked ? (

@@ -26,3 +26,7 @@ services:
     App\Service\ProfileService:
         arguments:
             $uploadDir: '%kernel.project_dir%/public/images'
+
+    App\Service\MediaUploadService:
+        arguments:
+            $uploadDir: '%kernel.project_dir%/public/images'
