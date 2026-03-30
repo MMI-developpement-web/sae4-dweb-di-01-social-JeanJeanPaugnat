@@ -39,8 +39,20 @@ class Post
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'likes')]
     private Collection $likedBy;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'replies')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?Post $parent = null;
+
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['remove'])]
+    private Collection $replies;
+
     private bool $isLiked = false;
 
+    public function __construct()
+    {
+        $this->likedBy = new ArrayCollection();
+        $this->replies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,5 +132,28 @@ class Post
         $this->media = $media;
 
         return $this;
+    }
+
+    public function getParent(): ?Post
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Post $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function getReplies(): Collection
+    {
+        return $this->replies;
+    }
+
+    #[Groups('default')]
+    public function getRepliesCount(): int
+    {
+        return $this->replies->count();
     }
 }
