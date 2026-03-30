@@ -1,9 +1,8 @@
 import CardPost from '../ui/CardPost';
 import { imageUrl } from '../../utils/Api';
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 import { getTimeAgo } from "../../utils/TimeAgo";
-import { RefreshCw } from "lucide-react";
 import Button from '../ui/button';
 
 interface Post {
@@ -21,131 +20,91 @@ interface Post {
     is_liked: boolean;
 }
 
+const LIMIT = 10;
 
 export default function Feed() {
     const [view, setView] = useState<'for-you' | 'following'>('for-you');
     const [posts, setPosts] = useState<Post[]>([]);
-    const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [autoRefresh, setAutoRefresh] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const LIMIT = 10;
-    
-    // On garde trace du dernier offset chargé pour éviter les doublons
-    const lastFetchedOffset = useRef<number | null>(null);
 
-    const handleRemovePost = (postId: number) => {
-        setPosts((prevPosts) => prevPosts.filter(post => post.id !== postId));
-    };
+    // Ref pour le sentinel placé après le dernier post
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
+    // Ref de l'offset courant pour l'utiliser dans l'observer sans stale closure
+    const offsetRef = useRef(0);
+    const viewRef = useRef(view);
+    const isFetchingRef = useRef(false);
 
-    const refresh = useCallback(() => {
-        setPosts([]); // On vide pour recharger du haut
-        setOffset(0); // On revient au début
-        setHasMore(true);
-        lastFetchedOffset.current = null;
-        setRefreshKey(k => k + 1); // Force le re-déclenchement même si offset était déjà 0
-    }, []);
-
-    // Fonction de réinitialisation lors du changement d'onglet
-    const switchView = (newView: 'for-you' | 'following') => {
-        if (newView === view) return;
-        setView(newView);
-        refresh();
-    };
-
-    const fetchPosts = useCallback(async (currentOffset: number, currentView: string) => {
-        // VERROU : Si on est déjà en train de charger cet offset, on stop
-        if (loading || !hasMore || lastFetchedOffset.current === currentOffset) return;
-
-        lastFetchedOffset.current = currentOffset;
+    const fetchPosts = async (offset: number, currentView: string, reset = false) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
         setLoading(true);
 
         try {
-            // Choix dynamique de la fonction utilitaire selon l'onglet
             const fetcher = currentView === 'for-you' ? getAllPosts : getFollowingPosts;
-            const newData = await fetcher(LIMIT, currentOffset);
-            
-            if (newData.length < LIMIT) {
-                setHasMore(false);
-            }
+            const newData = await fetcher(LIMIT, offset);
 
-            setPosts(prev => currentOffset === 0 ? newData : [...prev, ...newData]);
-        } catch (error) {
-            console.error("Error fetching posts:", error);
-            lastFetchedOffset.current = null; // Réinitialise en cas d'erreur
+            if (newData.length < LIMIT) setHasMore(false);
+            setPosts(prev => reset ? newData : [...prev, ...newData]);
+            offsetRef.current = offset + newData.length;
+        } catch (e) {
+            console.error(e);
         } finally {
+            isFetchingRef.current = false;
             setLoading(false);
         }
-    }, [loading, hasMore]); // On enlève offset des dépendances du useCallback
-
-    useEffect(() => {
-        let interval: number;
-        if (autoRefresh) {
-            interval = setInterval(() => {
-                console.log("Auto-refreshing...");
-                refresh();
-            }, 30000);
-        }
-        return () => { if (interval) {
-            clearInterval(interval);
-        }
     };
-    }, [autoRefresh, refresh]);
 
-    // Chargement déclenché par le changement d'offset ou de refreshKey
+    // Chargement initial et à chaque changement de vue
     useEffect(() => {
-        fetchPosts(offset, view);
-    }, [offset, view, fetchPosts, refreshKey]);
+        viewRef.current = view;
+        offsetRef.current = 0;
+        isFetchingRef.current = false;
+        setHasMore(true);
+        setPosts([]);
+        fetchPosts(0, view, true);
+    }, [view]);
 
-    // Détection du scroll
+    // IntersectionObserver sur le sentinel (élément vide sous le dernier post)
     useEffect(() => {
-        const handleScroll = () => {
-            const scrollHeight = document.documentElement.scrollHeight;
-            const currentHeight = window.innerHeight + document.documentElement.scrollTop;
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
 
-            // Si on est à moins de 100px du bas, on charge la suite 
-            if (currentHeight + 100 >= scrollHeight && !loading && hasMore) {
-                setOffset(prev => prev + LIMIT);
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !isFetchingRef.current) {
+                fetchPosts(offsetRef.current, viewRef.current);
             }
-        };
+        });
 
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [loading, hasMore]);
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [hasMore]); // Re-attache si hasMore change (pour désactiver quand plus rien)
 
+    const handleRemovePost = (postId: number) => {
+        setPosts(prev => prev.filter(p => p.id !== postId));
+    };
+
+    const handleRefresh = () => {
+        viewRef.current = view;
+        offsetRef.current = 0;
+        isFetchingRef.current = false;
+        setHasMore(true);
+        setPosts([]);
+        fetchPosts(0, view, true);
+    };
 
     return (
         <div className="flex flex-col items-center pt-28 pb-10">
-            {/* Navigation et Options */}
             <div className='flex flex-col items-center gap-4 mb-8 w-full max-w-2xl'>
                 <div className='flex flex-row gap-8'>
-                    <h2 onClick={() => switchView('for-you')} className={`text-2xl font-bold cursor-pointer ${view === 'for-you' ? 'text-black' : 'text-gray-400'}`}>For you</h2>
-                    <h2 onClick={() => switchView('following')} className={`text-2xl font-bold cursor-pointer ${view === 'following' ? 'text-black' : 'text-gray-400'}`}>Following</h2>
+                    <h2 onClick={() => setView('for-you')} className={`text-2xl font-bold cursor-pointer ${view === 'for-you' ? 'text-black' : 'text-gray-400'}`}>For you</h2>
+                    <h2 onClick={() => setView('following')} className={`text-2xl font-bold cursor-pointer ${view === 'following' ? 'text-black' : 'text-gray-400'}`}>Following</h2>
                 </div>
-
                 <div className="flex items-center gap-6 w-full justify-between px-4">
-                    <Button 
-                        variant="default"
-                        size="md"
-                        onClick={refresh}
-                        text='Refresh'
-                        >
-                        </Button>
-
-
-                    <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
-                        <input 
-                            type="checkbox" 
-                            checked={autoRefresh} 
-                            onChange={() => setAutoRefresh(!autoRefresh)}
-                            className="accent-black"
-                        />
-                        Auto-refresh
-                    </label>
+                    <Button variant="default" size="md" onClick={handleRefresh} text='Refresh' />
                 </div>
             </div>
-            
+
             <div className="w-full max-w-2xl flex items-center flex-col">
                 {posts.map((post) => (
                     <CardPost
@@ -165,8 +124,11 @@ export default function Feed() {
                 ))}
             </div>
 
+            {/* Sentinel : l'observer le surveille pour déclencher le chargement suivant */}
+            {hasMore && <div ref={sentinelRef} className="h-10 w-full" />}
+
             {loading && <p className="mt-4 text-gray-500 italic">Chargement des posts...</p>}
-            {!hasMore && posts.length > 0 && <p className="mt-10 text-gray-400 font-medium">Vous avez vu tout les posts !</p>}
+            {!hasMore && posts.length > 0 && <p className="mt-10 text-gray-400 font-medium">Vous avez vu tous les posts !</p>}
         </div>
     );
 }
