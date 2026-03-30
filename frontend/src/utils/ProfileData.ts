@@ -9,7 +9,6 @@ let showPublicProfile = async function({ params }: any) {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token || ''}`
-
         },
     });
 
@@ -18,14 +17,32 @@ let showPublicProfile = async function({ params }: any) {
         return;
     }
 
-    let data = await response.json();
-    return data;
+    return await response.json();
 };
 
 let showMyProfile = async function() {
     const username = localStorage.getItem('username');
     if (!username) return null;
     return showPublicProfile({ params: { username } });
+};
+
+let getProfilePosts = async function(username: string, limit: number, offset: number) {
+    let token = localStorage.getItem('mon_token');
+
+    let response = await fetch(`${API_URL}/profile/${username}/posts?limit=${limit}&offset=${offset}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token || ''}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to fetch profile posts");
+        return [];
+    }
+
+    return await response.json();
 };
 
 let modifyProfile = async function(formData: FormData) {
@@ -44,9 +61,7 @@ let modifyProfile = async function(formData: FormData) {
         return;
     }
 
-    let data = await response.json();
-    return data;
+    return await response.json();
 };
 
-
-export { showPublicProfile, showMyProfile, modifyProfile };
+export { showPublicProfile, showMyProfile, getProfilePosts, modifyProfile };

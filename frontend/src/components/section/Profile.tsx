@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"; // Ajout pour gérer l'état local
+import { useEffect, useState, useRef } from "react";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
@@ -8,10 +8,13 @@ import { handleFollowToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
 import CardPost from '../ui/CardPost';
 import { getTimeAgo } from "../../utils/TimeAgo";
+import { getProfilePosts } from "../../utils/ProfileData";
+
+const LIMIT = 10;
 
 interface ProfileData {
     user: {
-        id: number; // Important pour l'appel API
+        id: number;
         username: string;
         biography: string | null;
         location: string | null;
@@ -21,62 +24,85 @@ interface ProfileData {
         followers_count: number;
         following_count: number;
     };
-    posts: any[]; 
     isMe: boolean;
     isFollowing: boolean;
 }
 
 export default function Profile() {
     const initialData = useLoaderData() as ProfileData;
+    const { user, isMe } = initialData;
 
-    // On place isFollowing et le compteur dans un état pour une mise à jour fluide
     const [followingStatus, setFollowingStatus] = useState(initialData.isFollowing);
     const [followersCount, setFollowersCount] = useState(initialData.user.followers_count);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isFollowLoading, setIsFollowLoading] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
-    const [posts, setPosts] = useState(initialData.posts || []);
 
-    const { user, isMe } = initialData;
-    console.log(user.id);
+    // Posts avec pagination
+    const [posts, setPosts] = useState<any[]>([]);
+    const [hasMore, setHasMore] = useState(true);
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
+    const offsetRef = useRef(0);
+    const isFetchingRef = useRef(false);
 
+    // Recharge les posts quand le profil change (navigation entre profils)
     useEffect(() => {
-        setPosts(initialData.posts || []);
-        setFollowingStatus(initialData.isFollowing);
-        setFollowersCount(initialData.user.followers_count);
-    }, [initialData]);
+        setPosts([]);
+        setHasMore(true);
+        offsetRef.current = 0;
+        isFetchingRef.current = false;
+        fetchPosts(0);
+    }, [user.username]);
 
-    const handleRemovePost = useCallback((postId: number) => {
-        setPosts((prev) => prev.filter(p => p.id !== postId));
-    }, []);
-    
-    // Fonction de clic pour le bouton Follow/Unfollow
-    const onFollowClick = async () => {
-        if (isLoading) return;
+    const fetchPosts = async (offset: number) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
 
-        setIsLoading(true);
-        // Appel à ta fonction utilitaire (qui doit faire le fetch POST /api/social/follow/{id})
-            const result = await handleFollowToggle(user.username);
-            if (result) {
-                // Mise à jour de l'interface avec le retour du serveur
-                setFollowingStatus(result.isFollowing);
-                setFollowersCount(result.followers_count);
-            } else {
-                // Optionnel : afficher une notification d'erreur ici
-                console.error("Réponse du serveur vide ou invalide.");
+        const newData = await getProfilePosts(user.username, LIMIT, offset);
+        if (newData.length < LIMIT) setHasMore(false);
+        setPosts(prev => offset === 0 ? newData : [...prev, ...newData]);
+        offsetRef.current = offset + newData.length;
+        isFetchingRef.current = false;
+    };
+
+    // IntersectionObserver sur le sentinel
+    useEffect(() => {
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !isFetchingRef.current) {
+                fetchPosts(offsetRef.current);
             }
+        });
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [hasMore]);
+
+    const handleRemovePost = (postId: number) => {
+        setPosts(prev => prev.filter(p => p.id !== postId));
+    };
+
+    const onFollowClick = async () => {
+        if (isFollowLoading) return;
+        setIsFollowLoading(true);
+        const result = await handleFollowToggle(user.username);
+        if (result) {
+            setFollowingStatus(result.isFollowing);
+            setFollowersCount(result.followers_count);
+        }
+        setIsFollowLoading(false);
     };
 
     const handleLogout = async () => {
-        if(window.confirm("Are you sure you want to disconnect?")) {
+        if (window.confirm("Are you sure you want to disconnect?")) {
             await logout();
             navigate("/login");
         }
-        
-    }
-    
+    };
 
-    const bannerStyle = user?.banner 
+    const bannerStyle = user?.banner
         ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
 
@@ -103,7 +129,7 @@ export default function Profile() {
                                 variant={followingStatus ? "outline" : "default"} 
                                 size="md" 
                                 onClick={onFollowClick} // Liaison de la fonction
-                                disabled={isLoading}    // Empêche le multi-clic
+                                disabled={isFollowLoading}
                             />
                         )}
                         
@@ -165,30 +191,31 @@ export default function Profile() {
                 </div>
             </div>
             <div className="flex flex-col w-full max-w-2xl mx-auto px-4 border-t border-gray-100 pt-6">
-
-
                 <div className="flex flex-col items-center">
-                    {posts.length > 0 ? (
-                        posts.map((post: any) => (
-                            <CardPost 
-                                key={post.id}
-                                postId={post.id}
-                                content={post.content}
-                                username={post.user?.username || user.username}
-                                avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
-                                is_liked={post.isLiked}
-                                likesCount={post.likesCount}
-                                timeAgo={getTimeAgo(post.date_creation)}
-                                onDeleteSuccess={handleRemovePost}
-                                media={post.media ?? []}
-                            />
-                        ))
-                    ) : (
+                    {posts.map((post: any) => (
+                        <CardPost
+                            key={post.id}
+                            postId={post.id}
+                            content={post.content}
+                            username={post.user?.username || user.username}
+                            avatarUrl={post.user?.avatar ? imageUrl(post.user.avatar) : undefined}
+                            is_liked={post.is_liked}
+                            likesCount={post.likes_count}
+                            repliesCount={post.replies_count}
+                            timeAgo={getTimeAgo(post.date_creation)}
+                            onDeleteSuccess={handleRemovePost}
+                            media={post.media ?? []}
+                        />
+                    ))}
+                    {posts.length === 0 && !hasMore && (
                         <div className="flex flex-col items-center py-10 text-gray-400">
                             <p>No posts yet.</p>
                         </div>
                     )}
                 </div>
+
+                {/* Sentinel pour la pagination au scroll */}
+                {hasMore && <div ref={sentinelRef} className="h-10 w-full" />}
             </div>
         </section>
     );

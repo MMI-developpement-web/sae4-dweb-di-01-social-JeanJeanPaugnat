@@ -140,4 +140,41 @@ let updatePost = async function(postId: number, content: string, newFiles: File[
     return await response.json();
 };
 
-export { createPost, getAllPosts, getFollowingPosts, deletePost, getPost, updatePost };
+let createReply = async function(postId: number, content: string) {
+    let token = localStorage.getItem('mon_token');
+    let response = await fetch(`${API_URL}/post/${postId}/reply`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ content }),
+    });
+
+    if (!response.ok) {
+        console.error("Failed to create reply");
+        return null;
+    }
+
+    return await response.json();
+};
+
+let getReplies = async function(postId: number) {
+    let token = localStorage.getItem('mon_token');
+    let response = await fetch(`${API_URL}/post/${postId}/replies`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to fetch replies");
+        return [];
+    }
+
+    return await response.json();
+};
+
+export { createPost, getAllPosts, getFollowingPosts, deletePost, getPost, updatePost, createReply, getReplies };

@@ -25,7 +25,7 @@ class ApiPostController extends AbstractController
         $limit = $request->query->get('limit', 10);
         $offset = $request->query->get('offset', 0);
 
-        $posts = $postRepository->findBy([], ['date_creation' => 'DESC'], $limit, $offset);
+        $posts = $postRepository->findBy(['parent' => null], ['date_creation' => 'DESC'], $limit, $offset);
 
         foreach ($posts as $post) {
             if ($user && $post->getLikedBy()->contains($user)) {
@@ -152,6 +152,49 @@ class ApiPostController extends AbstractController
         $postRepository->save($post, true);
 
         return $this->json($post, Response::HTTP_OK, [], ['groups' => 'default']);
+    }
+
+    #[Route('/post/{id}/reply', name: 'post_reply_create', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function createReply(PostRepository $postRepository, #[CurrentUser] User $user, Request $request, int $id): Response
+    {
+        $parent = $postRepository->find($id);
+        if (!$parent) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $content = $data['content'] ?? '';
+
+        if (trim($content) === '') {
+            return $this->json(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $reply = new Post();
+        $reply->setContent($content);
+        $reply->setDateCreation(new \DateTime());
+        $reply->setUser($user);
+        $reply->setParent($parent);
+
+        $postRepository->save($reply, true);
+
+        return $this->json($reply, Response::HTTP_CREATED, [], ['groups' => 'default']);
+    }
+
+    #[Route('/post/{id}/replies', name: 'post_replies_get', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function getReplies(PostRepository $postRepository, #[CurrentUser] User $user, int $id): Response
+    {
+        $parent = $postRepository->find($id);
+        if (!$parent) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $replies = $postRepository->findBy(['parent' => $parent], ['date_creation' => 'DESC']);
+
+        foreach ($replies as $reply) {
+            $reply->setIsLiked($reply->getLikedBy()->contains($user));
+        }
+
+        return $this->json($replies, Response::HTTP_OK, [], ['groups' => 'default']);
     }
 
 }

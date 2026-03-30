@@ -38,11 +38,12 @@ class PostRepository extends ServiceEntityRepository
     public function findTimeline(User $user, int $limit, int $offset)
     {
         return $this->createQueryBuilder('t')
-            ->where('t.user IN (:following)') // Tweets des abonnements [cite: 279]
+            ->where('t.user IN (:following)')
+            ->andWhere('t.parent IS NULL')
             ->setParameter('following', $user->getFollowing())
-            ->orderBy('t.date_creation', 'DESC')    // Du plus récent au plus ancien [cite: 282]
-            ->setMaxResults($limit)             // LIMIT
-            ->setFirstResult($offset)           // OFFSET
+            ->orderBy('t.date_creation', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
     }

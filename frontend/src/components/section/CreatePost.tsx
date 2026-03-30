@@ -1,10 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { createPost } from "../../utils/PostData";
 import { useNavigate } from "react-router-dom";
 import { Image, Film, X } from "lucide-react";
 import Input from "../ui/Input";
+import { imageUrl } from "../../utils/Api";
+import { showMyProfile } from "../../utils/ProfileData";
 
 const MAX_CHARS = 280;
 const MAX_FILES = 4;
@@ -18,7 +20,14 @@ interface MediaPreview {
 export default function CreatePost() {
     const [text, setText] = useState("");
     const [mediaFiles, setMediaFiles] = useState<MediaPreview[]>([]);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        showMyProfile().then((data: any) => {
+            if (data?.user?.avatar) setAvatarUrl(imageUrl(data.user.avatar));
+        });
+    }, []);
     const remaining = MAX_CHARS - text.length;
     const imageInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +78,7 @@ export default function CreatePost() {
             <div className="flex flex-col px-[30px] pt-[23px] gap-4">
                 <div className="flex gap-[14px] items-start w-full">
                     <div className="flex flex-col items-center gap-[7px] w-[44px] shrink-0">
-                        <Avatar url="https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg" size="sm" />
+                        <Avatar url={avatarUrl ?? undefined} size="sm" />
                         <span className={`span10-regular ${remaining < 0 ? "text-red-warning" : "text-dark-bg"}`}>
                             {text.length}/{MAX_CHARS}
                         </span>
