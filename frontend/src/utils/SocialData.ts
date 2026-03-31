@@ -51,4 +51,25 @@ let handleLikeToggle = async function(postId: number) {
     return data;
 };
 
-export { handleFollowToggle, handleLikeToggle };
+let handleBlockToggle = async (username: string) => {
+    let token = localStorage.getItem('mon_token');
+
+    try {
+        const response = await fetch(`${API_URL}/social/block/${username}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token || ''}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return { isBlocked: data.isBlocked };
+        }
+    } catch (error) {
+        console.error("Erreur lors du blocage", error);
+    }
+};
+
+export { handleFollowToggle, handleLikeToggle, handleBlockToggle };
