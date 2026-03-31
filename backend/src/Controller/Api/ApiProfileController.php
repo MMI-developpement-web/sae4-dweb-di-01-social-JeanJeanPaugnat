@@ -29,8 +29,10 @@ class ApiProfileController extends AbstractController
         }
 
         $isFollowing = false;
+        $isBlocked = false;
         if ($currentUser && $currentUser !== $user) {
             $isFollowing = $currentUser->getFollowing()->contains($user);
+            $isBlocked = $currentUser->getBlockedUsers()->contains($user);
         }
 
         $isMe = ($currentUser === $user);
@@ -38,8 +40,30 @@ class ApiProfileController extends AbstractController
         return $this->json([
             'user' => $user,
             'isFollowing' => $isFollowing,
+            'isBlocked' => $isBlocked,
             'isMe' => $isMe,
         ], Response::HTTP_OK, [], ['groups' => ['profile']]);
+    }
+
+    #[Route('/{username}/blocked', name: 'profile_blocked', methods: ['GET'])]
+    public function blocked(UserRepository $userRepository, string $username, #[CurrentUser] ?User $currentUser): Response
+    {
+        if (!$currentUser) {
+            return $this->json(['error' => 'Non connecté'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $userRepository->findOneBy(['username' => $username]);
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($currentUser->getId() !== $user->getId()) {
+            return $this->json(['error' => 'Accès refusé'], Response::HTTP_FORBIDDEN);
+        }
+
+        $blockedUsers = $currentUser->getBlockedUsers()->toArray();
+
+        return $this->json($blockedUsers, Response::HTTP_OK, [], ['groups' => ['profile']]);
     }
 
     #[Route('/{username}/posts', name: 'profile_posts', methods: ['GET'])]
