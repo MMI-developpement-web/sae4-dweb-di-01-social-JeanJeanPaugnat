@@ -264,6 +264,7 @@ export default function Profile() {
                             timeAgo={getTimeAgo(post.date_creation)}
                             onDeleteSuccess={handleRemovePost}
                             media={post.media ?? []}
+                            isCensored={post.is_censored ?? false}
                         />
                     ))}
                     {posts.length === 0 && !hasMore && (

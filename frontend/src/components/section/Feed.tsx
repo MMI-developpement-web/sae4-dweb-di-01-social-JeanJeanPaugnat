@@ -18,6 +18,7 @@ interface Post {
     likes_count: number;
     replies_count: number;
     is_liked: boolean;
+    is_censored?: boolean;
 }
 
 const LIMIT = 10;
@@ -120,6 +121,7 @@ export default function Feed() {
                         repliesCount={post.replies_count}
                         is_liked={post.is_liked}
                         media={post.media ?? []}
+                        isCensored={post.is_censored ?? false}
                     />
                 ))}
             </div>

@@ -39,6 +39,7 @@ export interface CardPostProps
   repliesCount?: number;
   is_liked?: boolean;
   media?: string[];
+  isCensored?: boolean;
   onDeleteSuccess?: (postId: number) => void;
 }
 
@@ -54,6 +55,7 @@ export default function CardPost({
   repliesCount,
   is_liked,
   media,
+  isCensored,
   onDeleteSuccess,
   ...props
 }: CardPostProps) {
@@ -136,9 +138,10 @@ export default function CardPost({
       <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
         {content}
       </p>
-      {media && media.length > 0 && (
+      {!isCensored && media && media.length > 0 && (
         <MediaCarousel media={media} />
       )}
+      {!isCensored && (
       <div className="flex  gap-4">
           <div className="flex items-center gap-2 mt-2">
                 <button onClick={onLikeClick} className="transition-colors">
@@ -157,6 +160,7 @@ export default function CardPost({
               <span className="text-sm text-gray-600">{replyCount}</span>
             </div>
       </div>
+      )}
 
       {replyOpen && (
         <div className="flex flex-col gap-3 mt-2">
