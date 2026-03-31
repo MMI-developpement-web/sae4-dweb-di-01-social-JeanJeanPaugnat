@@ -162,6 +162,11 @@ class ApiPostController extends AbstractController
             return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
         }
 
+        // Empêcher de répondre si le propriétaire du post nous a bloqué
+        if ($parent->getUser()->getBlockedUsers()->contains($user)) {
+            return $this->json(['error' => 'Action non autorisée'], Response::HTTP_FORBIDDEN);
+        }
+
         $data = json_decode($request->getContent(), true);
         $content = $data['content'] ?? '';
 

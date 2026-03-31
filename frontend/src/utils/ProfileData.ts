@@ -64,4 +64,23 @@ let modifyProfile = async function(formData: FormData) {
     return await response.json();
 };
 
-export { showPublicProfile, showMyProfile, getProfilePosts, modifyProfile };
+let getBlockedUsers = async function(username: string) {
+    let token = localStorage.getItem('mon_token');
+
+    let response = await fetch(`${API_URL}/profile/${username}/blocked`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token || ''}`
+        },
+    });
+
+    if (!response.ok) {
+        console.error("Failed to fetch blocked users");
+        return [];
+    }
+
+    return await response.json();
+};
+
+export { showPublicProfile, showMyProfile, getProfilePosts, getBlockedUsers, modifyProfile };

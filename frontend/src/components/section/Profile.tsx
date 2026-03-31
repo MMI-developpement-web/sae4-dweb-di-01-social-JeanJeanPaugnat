@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
-import { Link2, MoreHorizontal, MapPin, Unplug } from "lucide-react";
+import { Link2, MoreHorizontal, MapPin, Unplug, ShieldBan } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { imageUrl } from "../../utils/Api";
-import { handleFollowToggle } from "../../utils/SocialData";
+import { handleFollowToggle, handleBlockToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
 import CardPost from '../ui/CardPost';
 import { getTimeAgo } from "../../utils/TimeAgo";
-import { getProfilePosts } from "../../utils/ProfileData";
+import { getProfilePosts, getBlockedUsers } from "../../utils/ProfileData";
 
 const LIMIT = 10;
 
@@ -26,6 +26,7 @@ interface ProfileData {
     };
     isMe: boolean;
     isFollowing: boolean;
+    isBlocked: boolean;
 }
 
 export default function Profile() {
@@ -35,7 +36,10 @@ export default function Profile() {
     const [followingStatus, setFollowingStatus] = useState(initialData.isFollowing);
     const [followersCount, setFollowersCount] = useState(initialData.user.followers_count);
     const [isFollowLoading, setIsFollowLoading] = useState(false);
+    const [isBlocked, setIsBlocked] = useState(initialData.isBlocked ?? false);
     const [showMenu, setShowMenu] = useState(false);
+    const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
+    const [showBlockedList, setShowBlockedList] = useState(false);
     const navigate = useNavigate();
 
     // Posts avec pagination
@@ -102,6 +106,26 @@ export default function Profile() {
         }
     };
 
+    const handleBlockUser = async () => {
+        const result = await handleBlockToggle(user.username);
+        if (result !== undefined) {
+            setIsBlocked(result.isBlocked);
+            if (result.isBlocked) {
+                // Auto-unfollow after block
+                setFollowingStatus(false);
+            }
+        }
+        setShowMenu(false);
+    };
+
+    const handleShowBlockedUsers = async () => {
+        if (!showBlockedList) {
+            const data = await getBlockedUsers(user.username);
+            setBlockedUsers(Array.isArray(data) ? data : []);
+        }
+        setShowBlockedList(prev => !prev);
+    };
+
     const bannerStyle = user?.banner
         ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
         : { backgroundColor: "#4a92a6" };
@@ -123,12 +147,12 @@ export default function Profile() {
                     <div className="flex items-center mt-12 gap-2">
                         {isMe ? (
                             <Button text="Edit Profile" variant="outline" size="md" onClick={() => navigate('/profile/edit')} />
-                        ) : (
+                        ) : !isBlocked && (
                             <Button 
                                 text={followingStatus ? "Unfollow" : "Follow"} 
                                 variant={followingStatus ? "outline" : "default"} 
                                 size="md" 
-                                onClick={onFollowClick} // Liaison de la fonction
+                                onClick={onFollowClick}
                                 disabled={isFollowLoading}
                             />
                         )}
@@ -148,6 +172,15 @@ export default function Profile() {
                                 <Unplug size={16} />
                                 Disconnect
                             </button>
+                            {!isMe && (
+                                <button
+                                    onClick={handleBlockUser}
+                                    className="flex items-center gap-2 text-red-500 w-full p-2 hover:bg-red-50 rounded"
+                                >
+                                    <ShieldBan size={16} />
+                                    {isBlocked ? 'Unblock User' : 'Block User'}
+                                </button>
+                            )}
                         </div>
                     )}
 
@@ -190,6 +223,32 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            {isMe && (
+                <div className="px-6 mt-4">
+                    <button
+                        onClick={handleShowBlockedUsers}
+                        className="flex items-center gap-2 text-red-500 text-sm border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
+                    >
+                        <ShieldBan size={14} />
+                        {showBlockedList ? 'Hide blocked users' : 'Blocked users'}
+                        {!showBlockedList && blockedUsers.length === 0 ? '' : ` (${blockedUsers.length})`}
+                    </button>
+                    {showBlockedList && (
+                        <div className="mt-2 bg-white rounded-lg border border-gray-100 divide-y divide-gray-50">
+                            {blockedUsers.length === 0 ? (
+                                <p className="text-sm text-gray-400 p-3">No blocked users.</p>
+                            ) : (
+                                blockedUsers.map((u: any) => (
+                                    <div key={u.id} className="flex items-center gap-3 p-3">
+                                        <Avatar url={u.avatar ? imageUrl(u.avatar) : undefined} size="sm" />
+                                        <span className="text-sm font-medium text-dark-bg">@{u.username}</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
             <div className="flex flex-col w-full max-w-2xl mx-auto px-4 border-t border-gray-100 pt-6">
                 <div className="flex flex-col items-center">
                     {posts.map((post: any) => (
