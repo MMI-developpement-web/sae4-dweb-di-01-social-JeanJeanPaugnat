@@ -48,6 +48,10 @@ class Post
 
     private bool $isLiked = false;
 
+    #[ORM\Column(options: ["default" => false])]
+    #[Groups('default')]
+    private bool $isCensored = false;
+
     public function __construct()
     {
         $this->likedBy = new ArrayCollection();
@@ -60,8 +64,9 @@ class Post
     }
 
     public function getContent(): ?string
-    {
-        if ($this->user && $this->user->getIsBlocked()) {
+    {        if ($this->isCensored) {
+            return "Ce message enfreint les conditions d'utilisation de la plateforme";
+        }        if ($this->user && $this->user->getIsBlocked()) {
             return "Ce compte a été bloqué pour non-respect des conditions d’utilisation.";
         }
         return $this->content;
@@ -106,6 +111,9 @@ class Post
     #[Groups('default')]
     public function getLikesCount(): int
     {
+        if ($this->isCensored) {
+            return 0;
+        }
         return $this->likedBy->count();
     }
 
@@ -154,6 +162,21 @@ class Post
     #[Groups('default')]
     public function getRepliesCount(): int
     {
+        if ($this->isCensored) {
+            return 0;
+        }
         return $this->replies->count();
+    }
+
+    public function getIsCensored(): bool
+    {
+        return $this->isCensored;
+    }
+
+    public function setIsCensored(bool $isCensored): static
+    {
+        $this->isCensored = $isCensored;
+
+        return $this;
     }
 }

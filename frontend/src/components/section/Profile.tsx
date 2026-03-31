@@ -165,13 +165,15 @@ export default function Profile() {
                 </div>
                 {showMenu && (
                         <div className="absolute right-6 mt-[-10px] w-fit bg-white rounded-lg z-10 px-1 py-1">
-                            <button 
-                                onClick={handleLogout}
-                                className="flex items-center gap-2 text-dark-bg w-full p-2 hover:bg-black/5 rounded"
-                            >
-                                <Unplug size={16} />
-                                Disconnect
-                            </button>
+                            {isMe && (
+                                <button 
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-2 text-dark-bg w-full p-2 hover:bg-black/5 rounded"
+                                >
+                                    <Unplug size={16} />
+                                    Disconnect
+                                </button>
+                            )}
                             {!isMe && (
                                 <button
                                     onClick={handleBlockUser}
@@ -264,6 +266,7 @@ export default function Profile() {
                             timeAgo={getTimeAgo(post.date_creation)}
                             onDeleteSuccess={handleRemovePost}
                             media={post.media ?? []}
+                            isCensored={post.is_censored ?? false}
                         />
                     ))}
                     {posts.length === 0 && !hasMore && (
