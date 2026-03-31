@@ -78,6 +78,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'user_likes')]
     private Collection $likes;
 
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'blockedBy')]
+    #[ORM\JoinTable(name: 'user_blocked')]
+    private Collection $blockedUsers;
+
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'blockedUsers')]
+    private Collection $blockedBy;
+
     #[ORM\Column(options: ["default" => false])]
     #[Groups(['admin_read', 'profile'])]
     private bool $isBlocked = false;
@@ -88,6 +95,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->following = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->blockedUsers = new ArrayCollection();
+        $this->blockedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -390,5 +399,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isBlocked = $isBlocked;
 
         return $this;
+    }
+
+    public function getBlockedUsers(): Collection
+    {
+        return $this->blockedUsers;
+    }
+
+    public function addBlockedUser(self $user): static
+    {
+        if (!$this->blockedUsers->contains($user)) {
+            $this->blockedUsers->add($user);
+        }
+        return $this;
+    }
+
+    public function removeBlockedUser(self $user): static
+    {
+        $this->blockedUsers->removeElement($user);
+        return $this;
+    }
+
+    public function getBlockedBy(): Collection
+    {
+        return $this->blockedBy;
     }
 }
