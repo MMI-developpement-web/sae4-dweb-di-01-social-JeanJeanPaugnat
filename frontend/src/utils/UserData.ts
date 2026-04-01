@@ -52,7 +52,7 @@ let createAccount = async function(username: string, email: string, password: st
     }
 
     let data = await response.json();
-    localStorage.setItem('mon_token', data.access_token); 
+    localStorage.setItem('mon_token', data.access_token);
     return data;
 }
 
