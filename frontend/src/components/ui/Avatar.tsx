@@ -47,7 +47,7 @@ export default function Avatar({
         <>
           <div
             className="absolute inset-0 flex items-center justify-center bg-[rgba(110,110,110,0.35)] cursor-pointer"
-            onClick={() => inputRef.current?.click()}
+            onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           >
             <ImagePlus className="text-white" size={30} />
           </div>
@@ -57,6 +57,7 @@ export default function Avatar({
             accept="image/*"
             className="hidden"
             onChange={onChange}
+            onClick={(e) => e.stopPropagation()}
           />
         </>
       )}

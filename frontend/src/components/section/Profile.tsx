@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
 import { Link2, MoreHorizontal, MapPin, Unplug, ShieldBan } from "lucide-react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { imageUrl } from "../../utils/Api";
 import { handleFollowToggle, handleBlockToggle } from "../../utils/SocialData";
 import { logout } from "../../utils/UserData";
@@ -147,13 +147,20 @@ export default function Profile() {
                     <div className="flex items-center mt-12 gap-2">
                         {isMe ? (
                             <Button text="Edit Profile" variant="outline" size="md" onClick={() => navigate('/profile/edit')} />
-                        ) : !isBlocked && (
+                        ) : !isBlocked ? (
                             <Button 
                                 text={followingStatus ? "Unfollow" : "Follow"} 
                                 variant={followingStatus ? "outline" : "default"} 
                                 size="md" 
                                 onClick={onFollowClick}
                                 disabled={isFollowLoading}
+                            />
+                        ) : (
+                            <Button
+                                text="Unblock"
+                                variant="warning"
+                                size="md"
+                                onClick={handleBlockUser}
                             />
                         )}
                         
@@ -241,10 +248,12 @@ export default function Profile() {
                                 <p className="text-sm text-gray-400 p-3">No blocked users.</p>
                             ) : (
                                 blockedUsers.map((u: any) => (
-                                    <div key={u.id} className="flex items-center gap-3 p-3">
-                                        <Avatar url={u.avatar ? imageUrl(u.avatar) : undefined} size="sm" />
-                                        <span className="text-sm font-medium text-dark-bg">@{u.username}</span>
-                                    </div>
+                                    <Link to={`/profile/${u.username}`}>   
+                                            <div key={u.id} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded">
+                                                <Avatar url={u.avatar ? imageUrl(u.avatar) : undefined} size="sm" />
+                                                <span className="text-sm font-medium text-dark-bg">@{u.username}</span>
+                                            </div>
+                                    </Link>
                                 ))
                             )}
                         </div>
