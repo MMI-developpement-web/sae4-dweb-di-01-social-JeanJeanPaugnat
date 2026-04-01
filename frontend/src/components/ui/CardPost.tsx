@@ -63,6 +63,7 @@ export default function CardPost({
     const [likeCount, setLikeCount] = useState(likesCount);
     const [replyCount, setReplyCount] = useState(repliesCount ?? 0);
     const [showMenu, setShowMenu] = useState(false);
+    const [showReplyMenuId, setShowReplyMenuId] = useState<number | null>(null);
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [replies, setReplies] = useState<any[]>([]);
@@ -89,6 +90,17 @@ export default function CardPost({
                 onDeleteSuccess?.(postId);
             }
         }
+    };
+
+    const handleDeleteReply = async (replyId: number) => {
+        if (window.confirm("Voulez-vous vraiment supprimer cette réponse ?")) {
+            const success = await deletePost(replyId);
+            if (success) {
+                setReplies(prev => prev.filter(r => r.id !== replyId));
+                setReplyCount(prev => prev - 1);
+            }
+        }
+        setShowReplyMenuId(null);
     };
 
     const handleReplyToggle = async () => {
@@ -173,29 +185,53 @@ export default function CardPost({
             >
 
             </Input>
-            <Button onClick={handleReplySubmit} text="Reply" disabled={submitting || replyText.trim() === ''}></Button>
+            <Button onClick={handleReplySubmit}  text="Reply" disabled={submitting || replyText.trim() === ''}></Button>
           </div>
 
           {replies.length > 0 && (
             <div className="flex flex-col gap-2 border-l-2 border-[#9C9C9C] pl-3">
-              {replies.map((reply: any) => (
-                <div key={reply.id} className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <Link to={`/profile/${reply.user?.username}`}>
-                      <Avatar size="sm" url={imageUrl(reply.user?.avatar)} />
-                    </Link>
-                    <div className="flex flex-col leading-tight">
-                      <Link to={`/profile/${reply.user?.username}`} className="hover:underline">
-                        <span className="font-poppins font-medium text-dark-bg text-[14px]">{reply.user?.username}</span>
-                      </Link>
-                      <span className="font-poppins font-normal text-light-text text-[12px]">
-                        {getTimeAgo(reply.date_creation)}
-                      </span>
+              {replies.map((reply: any) => {
+                const isReplyOwner = localStorage.getItem('username') === reply.user?.username;
+                return (
+                  <div key={reply.id} className="flex flex-col gap-1 relative">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Link to={`/profile/${reply.user?.username}`}>
+                          <Avatar size="sm" url={imageUrl(reply.user?.avatar)} />
+                        </Link>
+                        <div className="flex flex-col leading-tight">
+                          <Link to={`/profile/${reply.user?.username}`} className="hover:underline">
+                            <span className="font-poppins font-medium text-dark-bg text-[14px]">{reply.user?.username}</span>
+                          </Link>
+                          <span className="font-poppins font-normal text-light-text text-[12px]">
+                            {getTimeAgo(reply.date_creation)}
+                          </span>
+                        </div>
+                      </div>
+                      {isReplyOwner && (
+                        <button
+                          onClick={() => setShowReplyMenuId(showReplyMenuId === reply.id ? null : reply.id)}
+                          className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors"
+                        >
+                          <MoreHorizontal className="size-4 text-light-text" />
+                        </button>
+                      )}
                     </div>
+                    <p className="font-poppins text-dark-text text-[13px] leading-normal break-words pl-10">{reply.content}</p>
+                    {showReplyMenuId === reply.id && (
+                      <div className="absolute right-0 top-9 w-fit bg-white rounded-lg z-10 px-1 py-1">
+                        <button
+                          onClick={() => handleDeleteReply(reply.id)}
+                          className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"
+                        >
+                          <Trash2 size={14} />
+                          Delete Reply
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <p className="font-poppins text-dark-text text-[13px] leading-normal break-words pl-10">{reply.content}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
