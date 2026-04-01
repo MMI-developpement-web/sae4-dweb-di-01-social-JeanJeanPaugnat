@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { MoreHorizontal, Heart, Trash2, Brush, MessageSquare } from "lucide-react";
+import { Heart, Trash2, Brush, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
@@ -10,6 +10,7 @@ import MediaCarousel from "./MediaCarousel";
 import Input from "./Input";
 import Button from "./button";
 import ReplyItem from "./ReplyItem";
+import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
 
 const cardPostVariants = cva(
   "bg-light-bg relative border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
@@ -61,8 +62,6 @@ export default function CardPost({
     const [liked, setLiked] = useState(is_liked);
     const [likeCount, setLikeCount] = useState(likesCount);
     const [replyCount, setReplyCount] = useState(repliesCount ?? 0);
-    const [showMenu, setShowMenu] = useState(false);
-    const [showReplyMenuId, setShowReplyMenuId] = useState<number | null>(null);
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [replies, setReplies] = useState<any[]>([]);
@@ -99,7 +98,6 @@ export default function CardPost({
                 setReplyCount(prev => prev - 1);
             }
         }
-        setShowReplyMenuId(null);
     };
 
     const handleReplyToggle = async () => {
@@ -142,9 +140,16 @@ export default function CardPost({
             </span>
           </div>
         </div>
-        <button onClick={() => setShowMenu(!showMenu)} className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors">
-          {isOwner && <MoreHorizontal className="size-5 text-light-text" />}
-        </button>
+        {isOwner && (
+          <DropdownMenu>
+            <DropdownMenuItem variant="danger" icon={<Trash2 size={16} />} onClick={handleDelete}>
+              Delete Post
+            </DropdownMenuItem>
+            <DropdownMenuItem icon={<Brush size={16} />} onClick={() => navigate(`/edit-post/${postId}`)}>
+              Edit Post
+            </DropdownMenuItem>
+          </DropdownMenu>
+        )}
       </div>
       <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
         {content}
@@ -193,8 +198,6 @@ export default function CardPost({
                 <ReplyItem
                   key={reply.id}
                   reply={reply}
-                  showMenu={showReplyMenuId === reply.id}
-                  onToggleMenu={() => setShowReplyMenuId(showReplyMenuId === reply.id ? null : reply.id)}
                   onDelete={() => handleDeleteReply(reply.id)}
                 />
               ))}
@@ -203,24 +206,7 @@ export default function CardPost({
         </div>
       )}
           
-            {showMenu && (
-                <div className="absolute right-6 mt-7 w-fit bg-white rounded-lg z-10 px-1 py-1">
-                    <button 
-                        onClick={handleDelete}
-                        className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"
-                    >
-                        <Trash2 size={16} />
-                        Delete Post
-                    </button>
-                    <button
-                        onClick={() => { setShowMenu(false); navigate(`/edit-post/${postId}`); }}
-                        className="flex items-center gap-2 text-dark-text w-full p-2 hover:bg-black/5 transition-colors rounded"
-                    >
-                        <Brush size={16} />
-                        Edit Post
-                    </button>
-                </div>
-            )}
+  
     </div>
   );
 }

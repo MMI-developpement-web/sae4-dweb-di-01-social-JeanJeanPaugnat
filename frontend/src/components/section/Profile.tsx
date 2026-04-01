@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Avatar from "../ui/Avatar";
 import Button from "../ui/button";
-import { Link2, MoreHorizontal, MapPin, Unplug, ShieldBan } from "lucide-react";
+import { Link2, MapPin, Unplug, ShieldBan } from "lucide-react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { imageUrl } from "../../utils/Api";
 import { handleFollowToggle, handleBlockToggle } from "../../utils/SocialData";
@@ -9,6 +9,7 @@ import { logout } from "../../utils/UserData";
 import CardPost from '../ui/CardPost';
 import { getTimeAgo } from "../../utils/TimeAgo";
 import { getProfilePosts, getBlockedUsers } from "../../utils/ProfileData";
+import DropdownMenu, { DropdownMenuItem } from "../ui/DropdownMenu";
 
 const LIMIT = 10;
 
@@ -37,7 +38,6 @@ export default function Profile() {
     const [followersCount, setFollowersCount] = useState(initialData.user.followers_count);
     const [isFollowLoading, setIsFollowLoading] = useState(false);
     const [isBlocked, setIsBlocked] = useState(initialData.isBlocked ?? false);
-    const [showMenu, setShowMenu] = useState(false);
     const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
     const [showBlockedList, setShowBlockedList] = useState(false);
     const navigate = useNavigate();
@@ -115,7 +115,6 @@ export default function Profile() {
                 setFollowingStatus(false);
             }
         }
-        setShowMenu(false);
     };
 
     const handleShowBlockedUsers = async () => {
@@ -164,34 +163,21 @@ export default function Profile() {
                             />
                         )}
                         
-                        <button onClick={() => setShowMenu(!showMenu)} className="border-[1.5px] border-dark-bg h-[35px] w-[35px] flex items-center justify-center rounded-lg hover:bg-black/5 transition-colors">
-                            <MoreHorizontal className="w-5 h-5 text-dark-bg" />
-                        </button>
+                        <DropdownMenu triggerVariant="bordered">
+                            {isMe && (
+                                <DropdownMenuItem icon={<Unplug size={16} />} onClick={handleLogout}>
+                                    Disconnect
+                                </DropdownMenuItem>
+                            )}
+                            {!isMe && (
+                                <DropdownMenuItem variant="danger" icon={<ShieldBan size={16} />} onClick={handleBlockUser}>
+                                    {isBlocked ? 'Unblock User' : 'Block User'}
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenu>
                     </div>
                     
                 </div>
-                {showMenu && (
-                        <div className="absolute right-6 mt-[-10px] w-fit bg-white rounded-lg z-10 px-1 py-1">
-                            {isMe && (
-                                <button 
-                                    onClick={handleLogout}
-                                    className="flex items-center gap-2 text-dark-bg w-full p-2 hover:bg-black/5 rounded"
-                                >
-                                    <Unplug size={16} />
-                                    Disconnect
-                                </button>
-                            )}
-                            {!isMe && (
-                                <button
-                                    onClick={handleBlockUser}
-                                    className="flex items-center gap-2 text-red-500 w-full p-2 hover:bg-red-50 rounded"
-                                >
-                                    <ShieldBan size={16} />
-                                    {isBlocked ? 'Unblock User' : 'Block User'}
-                                </button>
-                            )}
-                        </div>
-                    )}
 
                 <div className="flex flex-col gap-[15px]">
                     <div className="flex flex-col leading-tight">

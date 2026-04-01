@@ -1,8 +1,9 @@
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Avatar from "./Avatar";
 import { imageUrl } from "../../utils/Api";
 import { getTimeAgo } from "../../utils/TimeAgo";
+import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
 
 export interface ReplyItemProps {
     reply: {
@@ -14,12 +15,10 @@ export interface ReplyItemProps {
             avatar?: string;
         };
     };
-    showMenu: boolean;
-    onToggleMenu: () => void;
     onDelete: () => void;
 }
 
-export default function ReplyItem({ reply, showMenu, onToggleMenu, onDelete }: ReplyItemProps) {
+export default function ReplyItem({ reply, onDelete }: ReplyItemProps) {
     const isReplyOwner = localStorage.getItem('username') === reply.user?.username;
 
     return (
@@ -39,26 +38,14 @@ export default function ReplyItem({ reply, showMenu, onToggleMenu, onDelete }: R
                     </div>
                 </div>
                 {isReplyOwner && (
-                    <button
-                        onClick={onToggleMenu}
-                        className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors"
-                    >
-                        <MoreHorizontal className="size-4 text-light-text" />
-                    </button>
+                    <DropdownMenu>
+                        <DropdownMenuItem variant="danger" icon={<Trash2 size={14} />} onClick={onDelete}>
+                            Delete Reply
+                        </DropdownMenuItem>
+                    </DropdownMenu>
                 )}
             </div>
             <p className="font-poppins text-dark-text text-[13px] leading-normal break-words pl-10">{reply.content}</p>
-            {showMenu && (
-                <div className="absolute right-0 top-9 w-fit bg-white rounded-lg z-10 px-1 py-1">
-                    <button
-                        onClick={onDelete}
-                        className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"
-                    >
-                        <Trash2 size={14} />
-                        Delete Reply
-                    </button>
-                </div>
-            )}
         </div>
     );
 }
