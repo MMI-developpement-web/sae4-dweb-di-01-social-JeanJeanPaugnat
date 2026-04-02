@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Home, Search, PlusSquare, User } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 
 const navbarVariants = cva(
     "bg-light-bg border-[#9C9C9C] flex p-4 z-50",
@@ -24,7 +25,7 @@ interface NavbarProps
 
 export default function Navbar({ className, variant, ...props }: NavbarProps) {
     
-    const username = localStorage.getItem("username");
+    const username = useAuthStore((state) => state.username);
 
     const navItems = [
         { icon: Home, label: "Home", href: "/feed" },
