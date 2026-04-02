@@ -193,7 +193,7 @@ export default function CardPost({
           </div>
 
           {replies.length > 0 && (
-            <div className="flex flex-col gap-2 border-l-2 border-border pl-3">
+            <div className="flex flex-col gap-3 border-l-2 border-gray-300 pl-3">
               {replies.map((reply: any) => (
                 <ReplyItem
                   key={reply.id}

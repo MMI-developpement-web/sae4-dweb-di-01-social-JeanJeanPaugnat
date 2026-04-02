@@ -22,7 +22,7 @@ export default function ReplyItem({ reply, onDelete }: ReplyItemProps) {
     const isReplyOwner = localStorage.getItem('username') === reply.user?.username;
 
     return (
-        <article className="flex flex-col gap-1 relative">
+        <article className="flex flex-col gap-2 relative border-b pb-4 border-gray-300 last:border-0">
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <Link to={`/profile/${reply.user?.username}`}>
@@ -45,7 +45,7 @@ export default function ReplyItem({ reply, onDelete }: ReplyItemProps) {
                     </DropdownMenu>
                 )}
             </div>
-            <p className="font-poppins text-dark-text text-[0.8125rem] leading-normal wrap-break-word pl-10">{reply.content}</p>
+            <p className="font-poppins text-dark-text text-[0.8125rem] leading-normal wrap-break-word">{reply.content}</p>
         </article>
     );
 }

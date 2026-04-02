@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { getAllPosts, getFollowingPosts } from "../../utils/PostData";
 import { getTimeAgo } from "../../utils/TimeAgo";
 import { RefreshCw } from "lucide-react";
+import Button from '../ui/button';
 
 function NestLogo({ className }: { className?: string }) {
     return (
@@ -112,7 +113,6 @@ export default function Feed() {
 
     return (
         <main className="flex flex-col items-center pb-20 md:pb-10 bg-light-bg">
-            {/* Header: logo + tabs */}
             <header className="bg-white w-full max-w-2xl flex flex-col items-center">
                 <div className="flex items-center justify-center pt-5 pb-3">
                     <NestLogo className="size-8.5 rotate-180 text-dark-bg" />
@@ -125,7 +125,7 @@ export default function Feed() {
                         className={`flex-1 py-2.5 text-lg w-50 font-medium transition-all cursor-pointer border-b-4 ${
                             view === 'for-you'
                                 ? 'border-dark-bg text-dark-bg'
-                                : ' text-light-text'
+                                : 'border-white text-light-text'
                         }`}
                     >
                         For you
@@ -137,7 +137,7 @@ export default function Feed() {
                         className={`flex-1 py-2.5 text-lg w-fit font-medium transition-all cursor-pointer border-b-4 ${
                             view === 'following'
                                 ? 'border-dark-bg text-dark-bg'
-                                : ' text-light-text'
+                                : 'border-white text-light-text'
                         }`}
                     >
                         Following
@@ -149,15 +149,15 @@ export default function Feed() {
             <button
                 onClick={handleRefresh}
                 aria-label="Rafraîchir le fil"
-                className={`fixed top-20 left-1/2 -translate-x-1/2 z-20 bg-brand text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transition-all duration-300 ${
-                    scrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+                className={`fixed top-10 left-1/2 -translate-x-1/2 z-20 gap-2 bg-dark-bg text-white rounded-lg text-sm font-medium px-4 py-2 shadow-lg flex items-center transition-all duration-300 ${
+                    scrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'
                 }`}
             >
                 <RefreshCw className="w-4 h-4" />
-                Actualiser
+                Refresh
             </button>
 
-            <div className="w-full max-w-2xl flex items-center flex-col">
+            <div className="w-full max-w-2xl flex items-center flex-col bg-white">
                 {posts.map((post) => (
                     <CardPost
                         key={`${view}-${post.id}`}

@@ -229,14 +229,14 @@ export default function Profile() {
                         {!showBlockedList && blockedUsers.length === 0 ? '' : ` (${blockedUsers.length})`}
                     </button>
                     {showBlockedList && (
-                        <div className="mt-2 bg-white rounded-lg border border-border divide-y divide-border">
+                        <div className="mt-2 bg-white rounded-lg divide-y divide-border">
                             {blockedUsers.length === 0 ? (
-                                <p className="text-sm text-light-text p-3">No blocked users.</p>
+                                <p className="text-sm text-light-text p-3">No blocked users...</p>
                             ) : (
-                                blockedUsers.map((u: any) => (
-                                    <Link key={u.id} to={`/profile/${u.username}`} className="flex items-center gap-3 p-3 hover:bg-light-bg rounded transition-colors">
-                                        <Avatar url={u.avatar ? imageUrl(u.avatar) : undefined} size="sm" />
-                                        <span className="text-sm font-medium text-dark-bg">@{u.username}</span>
+                                blockedUsers.map((user: any) => (
+                                    <Link key={user.id} to={`/profile/${user.username}`} className="flex items-center gap-3 p-3 rounded transition-colors">
+                                        <Avatar url={user.avatar ? imageUrl(user.avatar) : undefined} size="sm" />
+                                        <span className="text-sm hover:underline font-medium text-dark-bg">@{user.username}</span>
                                     </Link>
                                 ))
                             )}
