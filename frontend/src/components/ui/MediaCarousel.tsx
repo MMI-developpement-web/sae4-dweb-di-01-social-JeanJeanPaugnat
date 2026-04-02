@@ -1,34 +1,10 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { imageUrl } from "../../utils/Api";
+import MediaItem from "./MediaItem";
 
 interface MediaCarouselProps {
     media: string[];
-}
-
-function isVideo(filename: string) {
-    return /\.(mp4|webm|ogg|mov)$/i.test(filename);
-}
-
-function MediaItem({ src, className }: { src: string; className?: string }) {
-    if (isVideo(src)) {
-        return (
-            <video
-                src={src}
-                controls
-                className={className}
-                style={{ objectFit: "cover" }}
-            />
-        );
-    }
-    return (
-        <img
-            src={src}
-            alt=""
-            className={className}
-            style={{ objectFit: "cover" }}
-        />
-    );
 }
 
 export default function MediaCarousel({ media }: MediaCarouselProps) {

@@ -3,15 +3,9 @@ import Input from "../ui/Input";
 import FormField from "../ui/FormField";
 import Button from "../ui/button";
 import { useNavigate, Link } from "react-router-dom";
+import PasswordStrengthBar from "../ui/PasswordStrengthBar";
 
 import { createAccount } from "../../utils/UserData";
-
-type StrengthLevel = {
-  label: string;
-  textColor: string;
-  barColor: string;
-  barWidth: string;
-};
 
 function validatePasswords(password: string, confirmPassword: string): boolean {
   if (password !== confirmPassword) {
@@ -21,32 +15,11 @@ function validatePasswords(password: string, confirmPassword: string): boolean {
   return true;
 }
 
-
-function getPasswordStrength(password: string): StrengthLevel | null {
-  if (!password) return null;
-
-  const checks = [
-    /[a-z]/.test(password),
-    /[A-Z]/.test(password),
-    /\d/.test(password),
-    /[^a-zA-Z0-9]/.test(password),
-  ].filter(Boolean).length;
-
-  if (password.length < 6 || checks <= 1) {
-    return { label: "Weak", textColor: "text-[#ff2c19]", barColor: "bg-[#ff2c18]", barWidth: "w-[20px]" };
-  }
-  if (password.length < 10 || checks <= 2) {
-    return { label: "Medium", textColor: "text-[#f5a623]", barColor: "bg-[#f5a623]", barWidth: "w-[50px]" };
-  }
-  return { label: "Strong", textColor: "text-green-500", barColor: "bg-green-500", barWidth: "w-full" };
-}
-
 export default function SignUpForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const strength = getPasswordStrength(password);
   const navigate = useNavigate();
 
   function handleSignUp(username: string, email: string, password: string, confirmPassword: string) {
@@ -58,7 +31,7 @@ export default function SignUpForm() {
     createAccount(username, email, password).then(data => {
       if (data) {
         console.log("Account created successfully:", data);
-        navigate("/feed");
+        navigate("/login");
       }
     }).catch(error => {
       console.error("Error creating account:", error);
@@ -94,14 +67,7 @@ export default function SignUpForm() {
             <span className="text12-semi-bold text-dark-text">Password</span>
             <span className="text12-semi-bold text-red-warning">*</span>
           </div>
-          {strength && (
-            <div className="flex items-center gap-2.25">
-              <span className={`font-poppins text-[10px] ${strength.textColor}`}>{strength.label}</span>
-              <div className="bg-[#a1a1a1] h-1.25 w-21.25 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full transition-all ${strength.barColor} ${strength.barWidth}`} />
-              </div>
-            </div>
-          )}
+          <PasswordStrengthBar password={password} />
         </div>
         <Input
           variant="secondary"

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { MoreHorizontal, Heart, Trash2, Brush, MessageSquare } from "lucide-react";
+import { Heart, Trash2, Brush, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
@@ -7,10 +7,10 @@ import { useState } from "react";
 import { handleLikeToggle } from "../../utils/SocialData";
 import { deletePost, createReply, getReplies } from "../../utils/PostData";
 import MediaCarousel from "./MediaCarousel";
-import { getTimeAgo } from "../../utils/TimeAgo";
 import Input from "./Input";
 import Button from "./button";
-import { imageUrl } from "../../utils/Api";
+import ReplyItem from "./ReplyItem";
+import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
 
 const cardPostVariants = cva(
   "bg-light-bg relative border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
@@ -62,7 +62,6 @@ export default function CardPost({
     const [liked, setLiked] = useState(is_liked);
     const [likeCount, setLikeCount] = useState(likesCount);
     const [replyCount, setReplyCount] = useState(repliesCount ?? 0);
-    const [showMenu, setShowMenu] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [replies, setReplies] = useState<any[]>([]);
@@ -87,6 +86,16 @@ export default function CardPost({
             const success = await deletePost(postId);
             if (success) {
                 onDeleteSuccess?.(postId);
+            }
+        }
+    };
+
+    const handleDeleteReply = async (replyId: number) => {
+        if (window.confirm("Voulez-vous vraiment supprimer cette réponse ?")) {
+            const success = await deletePost(replyId);
+            if (success) {
+                setReplies(prev => prev.filter(r => r.id !== replyId));
+                setReplyCount(prev => prev - 1);
             }
         }
     };
@@ -131,9 +140,16 @@ export default function CardPost({
             </span>
           </div>
         </div>
-        <button onClick={() => setShowMenu(!showMenu)} className="flex items-center justify-center p-[3px] rounded-[6px] cursor-pointer hover:bg-black/5 transition-colors">
-          {isOwner && <MoreHorizontal className="size-5 text-light-text" />}
-        </button>
+        {isOwner && (
+          <DropdownMenu>
+            <DropdownMenuItem variant="danger" icon={<Trash2 size={16} />} onClick={handleDelete}>
+              Delete Post
+            </DropdownMenuItem>
+            <DropdownMenuItem icon={<Brush size={16} />} onClick={() => navigate(`/edit-post/${postId}`)}>
+              Edit Post
+            </DropdownMenuItem>
+          </DropdownMenu>
+        )}
       </div>
       <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
         {content}
@@ -173,52 +189,24 @@ export default function CardPost({
             >
 
             </Input>
-            <Button onClick={handleReplySubmit} text="Reply" disabled={submitting || replyText.trim() === ''}></Button>
+            <Button onClick={handleReplySubmit}  text="Reply" disabled={submitting || replyText.trim() === ''}></Button>
           </div>
 
           {replies.length > 0 && (
             <div className="flex flex-col gap-2 border-l-2 border-[#9C9C9C] pl-3">
               {replies.map((reply: any) => (
-                <div key={reply.id} className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <Link to={`/profile/${reply.user?.username}`}>
-                      <Avatar size="sm" url={imageUrl(reply.user?.avatar)} />
-                    </Link>
-                    <div className="flex flex-col leading-tight">
-                      <Link to={`/profile/${reply.user?.username}`} className="hover:underline">
-                        <span className="font-poppins font-medium text-dark-bg text-[14px]">{reply.user?.username}</span>
-                      </Link>
-                      <span className="font-poppins font-normal text-light-text text-[12px]">
-                        {getTimeAgo(reply.date_creation)}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="font-poppins text-dark-text text-[13px] leading-normal break-words pl-10">{reply.content}</p>
-                </div>
+                <ReplyItem
+                  key={reply.id}
+                  reply={reply}
+                  onDelete={() => handleDeleteReply(reply.id)}
+                />
               ))}
             </div>
           )}
         </div>
       )}
           
-            {showMenu && (
-                <div className="absolute right-6 mt-7 w-fit bg-white rounded-lg z-10 px-1 py-1">
-                    <button 
-                        onClick={handleDelete}
-                        className="flex items-center gap-2 text-red-600 w-full p-2 hover:bg-red-50 rounded"
-                    >
-                        <Trash2 size={16} />
-                        Delete Post
-                    </button>
-                    <button
-                        onClick={() => { setShowMenu(false); navigate(`/edit-post/${postId}`); }}
-                        className="flex items-center gap-2 text-dark-text w-full p-2 hover:bg-black/5 transition-colors rounded"
-                    >
-                        <Brush size={16} />
-                        Edit Post
-                    </button>
-                </div>
-            )}
+  
     </div>
   );
 }
