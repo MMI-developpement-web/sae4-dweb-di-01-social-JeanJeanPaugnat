@@ -15,7 +15,8 @@ import EditProfilePage from './routes/EditProfilePage.tsx';
 import { showPublicProfile, showMyProfile } from './utils/ProfileData.ts';
 import { getPost } from './utils/PostData.ts';
 import { hydrateAuth } from './utils/UserData.ts';
-// import './index.css';
+import { hydrateTheme } from './store/themeStore.ts';
+import './index.css';
 
 
 const router = createBrowserRouter([
@@ -61,6 +62,7 @@ const router = createBrowserRouter([
   basename: import.meta.env.BASE_URL
 });
 
+hydrateTheme();
 hydrateAuth().then(() => {
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
