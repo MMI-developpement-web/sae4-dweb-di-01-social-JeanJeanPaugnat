@@ -6,9 +6,11 @@ export default function FeedRoute() {
 
 
   return (
-    <div>
-        <Feed />
+    <div className="flex flex-col md:flex-row min-h-screen">
         <Navbar variant="default" />
+        <div className="flex-1 pb-16 md:pb-0">
+            <Feed />
+        </div>
     </div>
   );
 }

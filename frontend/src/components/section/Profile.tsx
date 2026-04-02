@@ -244,7 +244,7 @@ export default function Profile() {
                     )}
                 </div>
             )}
-            <div className="flex flex-col w-full max-w-2xl mx-auto px-4 border-t border-gray-300 pt-6">
+            <div className="flex flex-col w-full max-w-2xl mx-auto  pt-6">
                 <div className="flex flex-col items-center">
                     {posts.map((post: any) => (
                         <CardPost
