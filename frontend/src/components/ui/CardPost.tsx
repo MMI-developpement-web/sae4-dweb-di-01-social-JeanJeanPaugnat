@@ -13,11 +13,11 @@ import ReplyItem from "./ReplyItem";
 import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
 
 const cardPostVariants = cva(
-  "bg-light-bg relative border border-[#9C9C9C] px-6 py-[30px] flex flex-col gap-3 w-full max-w-[436px]",
+  "bg-light-bg relative border border-gray-300 border-b-0 px-6 py-[1.875rem] flex flex-col gap-3 w-full max-w-[27.25rem] last:border-b first:rounded-t-2xl",
   {
     variants: {
       isFirst: {
-        true: "rounded-t-[22px]",
+        true: "rounded-t-[1.375rem]",
         false: "",
       },
     },
@@ -123,19 +123,19 @@ export default function CardPost({
     };
 
   return (
-    <div className={cn(cardPostVariants({ isFirst }), className)} {...props}>
+    <article className={cn(cardPostVariants({ isFirst }), className)} {...props}>
       <div className="flex items-start justify-between w-full">
-        <div className="flex gap-[10px] items-center">
+        <div className="flex gap-2.5 items-center">
           <Link to={`/profile/${username}`}>
             <Avatar size="sm" url={avatarUrl} />
           </Link>
           <div className="flex flex-col items-start leading-normal">
             <Link to={`/profile/${username}`} className="hover:underline">
-              <h3 className="font-poppins font-medium text-dark-bg text-[16px]">
+              <h3 className="font-poppins font-medium text-dark-bg text-base">
                 {username}
               </h3>
             </Link>
-            <span className="font-poppins font-normal text-light-text text-[14px]">
+            <span className="font-poppins font-normal text-light-text text-[0.875rem]">
               {timeAgo}
             </span>
           </div>
@@ -151,7 +151,7 @@ export default function CardPost({
           </DropdownMenu>
         )}
       </div>
-      <p className="font-poppins font-normal text-dark-text text-[14px] leading-normal w-full break-words">
+      <p className="font-poppins font-normal text-dark-text text-[0.875rem] leading-normal w-full wrap-break-word">
         {content}
       </p>
       {!isCensored && media && media.length > 0 && (
@@ -193,7 +193,7 @@ export default function CardPost({
           </div>
 
           {replies.length > 0 && (
-            <div className="flex flex-col gap-2 border-l-2 border-[#9C9C9C] pl-3">
+            <div className="flex flex-col gap-2 border-l-2 border-border pl-3">
               {replies.map((reply: any) => (
                 <ReplyItem
                   key={reply.id}
@@ -207,6 +207,6 @@ export default function CardPost({
       )}
           
   
-    </div>
+    </article>
   );
 }
