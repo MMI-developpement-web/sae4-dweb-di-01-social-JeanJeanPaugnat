@@ -1,9 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import Button from "../components/ui/button";
+import { useAuthStore } from "../store/authStore";
 
 
 export default function FeedRoute() {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
+  if (isLoggedIn) {
+    return <Navigate to="/feed" replace />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen">

@@ -10,11 +10,11 @@ import EditPostPage from './routes/EditPost.tsx';
 import Feed from './routes/Feed.tsx';
 import Home from './routes/Home.tsx';
 
-import Navbar from './components/ui/Navbar.tsx';
 import ProfilePage from './routes/ProfilePage.tsx';
 import EditProfilePage from './routes/EditProfilePage.tsx';
 import { showPublicProfile, showMyProfile } from './utils/ProfileData.ts';
 import { getPost } from './utils/PostData.ts';
+import { hydrateAuth } from './utils/UserData.ts';
 // import './index.css';
 
 
@@ -61,10 +61,10 @@ const router = createBrowserRouter([
   basename: import.meta.env.BASE_URL
 });
 
-
-
+hydrateAuth().then(() => {
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <RouterProvider router={router} />
     </React.StrictMode>,
-  )
+  );
+});
