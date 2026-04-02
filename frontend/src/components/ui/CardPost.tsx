@@ -13,7 +13,7 @@ import ReplyItem from "./ReplyItem";
 import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
 
 const cardPostVariants = cva(
-  "bg-light-bg relative border border-gray-300 border-b-0 px-6 py-[1.875rem] flex flex-col gap-3 w-full max-w-[27.25rem] last:border-b first:rounded-t-2xl",
+  "bg-light-bg relative border border-gray-300 border-b-0 px-6 py-[1.875rem] flex flex-col gap-3 w-full  last:border-b first:rounded-t-2xl",
   {
     variants: {
       isFirst: {

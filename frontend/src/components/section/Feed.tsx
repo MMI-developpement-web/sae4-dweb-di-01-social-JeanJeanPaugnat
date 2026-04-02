@@ -112,7 +112,7 @@ export default function Feed() {
     };
 
     return (
-        <main className="flex flex-col items-center pb-20 md:pb-10 bg-light-bg">
+        <main className="flex flex-col items-center pb-20 md:pb-10 bg-white">
             <header className="bg-white w-full max-w-2xl flex flex-col items-center">
                 <div className="flex items-center justify-center pt-5 pb-3">
                     <NestLogo className="size-8.5 rotate-180 text-dark-bg" />
