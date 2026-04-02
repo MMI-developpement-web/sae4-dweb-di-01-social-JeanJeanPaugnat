@@ -1,17 +1,6 @@
 import API_URL from "./Api";
+import { useAuthStore } from "../store/authStore";
 
-
-
-//connexion
-let UserData = {
-    isLoggedIn: false,
-    username: "",
-    email: "",
-    password: "",
-    token: "",
-    // autres données utilisateur
-};
- 
 
 
 let Login = async function(email: string, password: string) {
@@ -30,8 +19,11 @@ let Login = async function(email: string, password: string) {
     }
 
     let data = await response.json();
-    localStorage.setItem('mon_token', data.access_token); 
+    localStorage.setItem('mon_token', data.access_token);
     localStorage.setItem('username', data.username);
+
+    // Mise à jour du store
+    useAuthStore.getState().setAuth(data.username, data.access_token);
 
     return data;
 };
@@ -53,6 +45,11 @@ let createAccount = async function(username: string, email: string, password: st
 
     let data = await response.json();
     localStorage.setItem('mon_token', data.access_token);
+    localStorage.setItem('username', data.username);
+
+    // Mise à jour du store
+    useAuthStore.getState().setAuth(data.username, data.access_token);
+
     return data;
 }
 
@@ -66,8 +63,38 @@ let logout = async function() {
     });
     localStorage.removeItem('mon_token');
     localStorage.removeItem('username');
+
+    // Réinitialisation du store
+    useAuthStore.getState().clearAuth();
 }
 
+/**
+ * Appelé au démarrage de l'app : lit le token dans localStorage,
+ * vérifie sa validité auprès du backend via GET /login, et hydrate le store si ok.
+ */
+let hydrateAuth = async function() {
+    const token = localStorage.getItem('mon_token');
 
-export {Login, createAccount, logout, UserData};
+    if (!token) return;
+
+    const response = await fetch(`${API_URL}/get_login`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('username', data.username);
+        useAuthStore.getState().setAuth(data.username, token);
+    } else {
+        // Token expiré ou invalide → on nettoie
+        localStorage.removeItem('mon_token');
+        localStorage.removeItem('username');
+    }
+};
+
+export { Login, createAccount, logout, hydrateAuth };
 
