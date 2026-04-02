@@ -68,16 +68,16 @@ export default function CreatePost() {
     };
 
     return (
-        <section className="bg-light-bg rounded-t-[26px] overflow-hidden w-full h-dvh">
-            <div className="flex flex-row items-center justify-between px-[33px] py-[17px] border-b border-b-[0.5px] border-[#9C9C9C]">
-                <p className="p12-medium text-dark-bg w-[76px]">Cancel</p>
+        <section className="bg-light-bg rounded-t-[1.625rem] overflow-hidden w-full h-dvh">
+            <div className="flex flex-row items-center justify-between px-8.25 py-4.25 border-b border-border">
+                <p className="p12-medium text-dark-bg w-19">Cancel</p>
                 <h3 className="title14-semi-bold text-dark-bg">New Post</h3>
                 <Button text="Publish" size="md" onClick={() => handlePublish(text)} />
             </div>
 
-            <div className="flex flex-col px-[30px] pt-[23px] gap-4">
-                <div className="flex gap-[14px] items-start w-full">
-                    <div className="flex flex-col items-center gap-[7px] w-[44px] shrink-0">
+            <div className="flex flex-col px-7.5 pt-5.75 gap-4">
+                <div className="flex gap-3.5 items-start w-full">
+                    <div className="flex flex-col items-center gap-1.75 w-11 shrink-0">
                         <Avatar url={avatarUrl ?? undefined} size="sm" />
                         <span className={`span10-regular ${remaining < 0 ? "text-red-warning" : "text-dark-bg"}`}>
                             {text.length}/{MAX_CHARS}
@@ -85,20 +85,20 @@ export default function CreatePost() {
                     </div>
 
                     
-                    <div className="flex flex-col flex-1 bg-[#DEDEDE] rounded-[8px]">
+                    <div className="flex flex-col flex-1 bg-gray-input-bg rounded-lg">
                         <Input placeholder="What's happening?"
                         action="textarea"
                         value={text}
                         onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
-                        className="bg-transparent resize-none px-[16px] pt-[10px] min-h-[120px] outline-none p12-regular text-dark-bg placeholder:text-[#9C9C9C]"
+                        className="bg-transparent resize-none px-4 pt-2.5 min-h-30 outline-none p12-regular text-dark-bg placeholder:text-light-text"
                         />
                         
-                        <div className="flex gap-3 px-[16px] pb-[10px]">
+                        <div className="flex gap-3 px-4 pb-2.5">
                             <button
                                 type="button"
                                 onClick={() => imageInputRef.current?.click()}
                                 disabled={mediaFiles.length >= MAX_FILES}
-                                className="text-[#9C9C9C] hover:text-dark-bg transition-colors disabled:opacity-40"
+                                className="text-light-text hover:text-dark-bg transition-colors disabled:opacity-40"
                             >
                                 <Image size={20} />
                             </button>
@@ -106,7 +106,7 @@ export default function CreatePost() {
                                 type="button"
                                 onClick={() => videoInputRef.current?.click()}
                                 disabled={mediaFiles.length >= MAX_FILES}
-                                className="text-[#9C9C9C] hover:text-dark-bg transition-colors disabled:opacity-40"
+                                className="text-light-text hover:text-dark-bg transition-colors disabled:opacity-40"
                             >
                                 <Film size={20} />
                             </button>
@@ -134,9 +134,9 @@ export default function CreatePost() {
 
                 
                 {mediaFiles.length > 0 && (
-                    <div className="flex gap-3 overflow-x-auto pb-2 pl-[58px]">
+                    <div className="flex gap-3 overflow-x-auto pb-2 pl-14.5">
                         {mediaFiles.map((media, index) => (
-                            <div key={index} className="relative shrink-0 w-[100px] h-[100px] rounded-xl overflow-hidden bg-[#DADADA]">
+                            <div key={index} className="relative shrink-0 w-25 h-25 rounded-xl overflow-hidden bg-gray-input-bg">
                                 {media.type === "image" ? (
                                     <img src={media.url} alt="" className="w-full h-full object-cover" />
                                 ) : (

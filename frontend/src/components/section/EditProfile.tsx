@@ -40,13 +40,13 @@ export default function EditProfile() {
 
     const bannerStyle = bannerPreview
         ? {
-              backgroundImage: `linear-gradient(rgba(54,54,54,0.56),rgba(54,54,54,0.56)), url(${bannerPreview})`,
+              backgroundImage: `linear-gradient(var(--color-overlay-banner),var(--color-overlay-banner)), url(${bannerPreview})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
           }
         : {
               background:
-                  "linear-gradient(rgba(54,54,54,0.56),rgba(54,54,54,0.56)), #4a92a6",
+                  `linear-gradient(var(--color-overlay-banner),var(--color-overlay-banner)), var(--color-brand)`,
           };
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,16 +66,16 @@ const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 };
 
     return (
-        <section className="bg-light-bg min-h-screen w-full flex flex-col rounded-t-[26px] overflow-hidden">
+        <section className="bg-light-bg min-h-screen w-full flex flex-col rounded-t-[1.625rem] overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-[33px] py-[17px] bg-light-bg rounded-t-[22px]">
+            <div className="flex items-center justify-between px-8.25 py-4.25 bg-light-bg rounded-t-[1.375rem]">
                 <button
-                    className="font-poppins font-medium text-[16px] text-dark-bg"
+                    className="font-poppins font-medium text-[1rem] text-dark-bg"
                     onClick={() => navigate(-1)}
                 >
                     Cancel
                 </button>
-                <span className="font-poppins font-semibold text-[16px] text-dark-bg whitespace-nowrap">
+                <span className="font-poppins font-semibold text-[1rem] text-dark-bg whitespace-nowrap">
                     Edit profile
                 </span>
                 <Button
@@ -99,7 +99,7 @@ const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Banner */}
             <div
-                className="relative w-full h-[109px] flex items-center justify-center cursor-pointer"
+                className="relative w-full h-27.25 flex items-center justify-center cursor-pointer"
                 style={bannerStyle}
                 onClick={() => bannerInputRef.current?.click()}
             >
@@ -113,24 +113,24 @@ const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 />
 
                 {/* Avatar editable, overlapping bottom-right */}
-                <div className="absolute -bottom-[36px] right-[31px] w-[72px] h-[72px] rounded-full ring-4 ring-light-bg overflow-hidden">
+                <div className="absolute -bottom-9 right-7.75 w-18 h-18 rounded-full ring-4 ring-light-bg overflow-hidden">
                     <Avatar size="xl" url={avatarPreview} editable onChange={handleAvatarChange} />
                 </div>
             </div>
 
             {/* Spacer for avatar overlap */}
-            <div className="h-[50px]" />
+            <div className="h-12.5" />
 
             {/* Form */}
-            <div className="flex flex-col gap-[19px] px-[31px] pb-10">
+            <div className="flex flex-col gap-4.75 px-7.75 pb-10">
 
                 {/* Bio with char counter */}
-                <div className="flex flex-col gap-[9px] items-start w-full">
+                <div className="flex flex-col gap-2.25 items-start w-full">
                     <div className="flex items-center justify-between w-full">
-                        <span className="font-poppins font-semibold text-[14px] text-dark-bg">
+                        <span className="font-poppins font-semibold text-[0.875rem] text-dark-bg">
                             Bio
                         </span>
-                        <span className="font-poppins font-normal text-[14px] text-light-text">
+                        <span className="font-poppins font-normal text-[0.875rem] text-light-text">
                             {bio.length}/{BIO_MAX}
                         </span>
                     </div>

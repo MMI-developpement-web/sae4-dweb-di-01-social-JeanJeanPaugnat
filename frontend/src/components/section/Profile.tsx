@@ -126,20 +126,20 @@ export default function Profile() {
     };
 
     const bannerStyle = user?.banner
-        ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' } 
-        : { backgroundColor: "#4a92a6" };
+        ? { backgroundImage: `url(${imageUrl(user.banner)})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+        : { backgroundColor: "var(--color-brand)" };
 
     const avatarUrl = user?.avatar 
         ? imageUrl(user.avatar) 
         : "https://imgcdn.stablediffusionweb.com/2024/6/10/d8009f99-2d87-45d9-b39f-50f08eee0027.jpg";
 
     return (
-        <section className="bg-light-bg min-h-screen w-full flex flex-col pb-24">
-            <div className="w-full h-[120px]" style={bannerStyle}></div>
+        <section className="bg-white min-h-screen w-full flex flex-col pb-24">
+            <div className="w-full h-30" style={bannerStyle}></div>
             
-            <div className="px-6 relative">
-                <div className="flex justify-between items-end mt-[-36px] mb-4">
-                    <div className="w-[72px] h-[72px] rounded-full ring-4 ring-light-bg bg-white relative shrink-0 overflow-hidden">
+            <div className="px-6 relative pb-4 bg-light-bg">
+                <div className="flex justify-between items-end -mt-9 mb-4">
+                    <div className="w-18 h-18 rounded-full ring-4 ring-light-bg bg-white relative shrink-0 overflow-hidden">
                         <Avatar url={avatarUrl} size="xl" />
                     </div>
                     
@@ -179,17 +179,17 @@ export default function Profile() {
                     
                 </div>
 
-                <div className="flex flex-col gap-[15px]">
+                <div className="flex flex-col gap-3.75">
                     <div className="flex flex-col leading-tight">
-                        <h2 className="text-[18px] font-bold text-dark-bg">{user?.username}</h2>
-                        <p className="text-[14px] text-[#9c9c9c]">@{user?.username?.toLowerCase()}</p>
+                        <h2 className="text-[1.125rem] font-bold text-dark-bg">{user?.username}</h2>
+                        <p className="text-[0.875rem] text-light-text">@{user?.username?.toLowerCase()}</p>
                     </div>
 
-                    <p className="text-[14px] text-[#4f4f4f] leading-relaxed">
+                    <p className="text-[0.875rem] text-dark-text leading-relaxed">
                         {user?.biography || "No bio yet."}
                     </p>
 
-                    <div className="flex flex-wrap gap-4 text-[13px] text-[#656565]">
+                    <div className="flex flex-wrap gap-4 text-[0.8125rem] text-muted">
                         {user?.location && (
                             <div className="flex items-center gap-1">
                                 <MapPin className="w-4 h-4" />
@@ -209,17 +209,17 @@ export default function Profile() {
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-1">
                             <span className="font-bold text-dark-bg">{followersCount}</span>
-                            <span className="text-[#656565]">Followers</span>
+                            <span className="text-muted">Followers</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="font-bold text-dark-bg">{user?.following_count || 0}</span>
-                            <span className="text-[#656565]">Following</span>
+                            <span className="text-muted">Following</span>
                         </div>
                     </div>
                 </div>
             </div>
             {isMe && (
-                <div className="px-6 mt-4">
+                <div className="px-6 pb-4 bg-light-bg">
                     <button
                         onClick={handleShowBlockedUsers}
                         className="flex items-center gap-2 text-red-500 text-sm border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
@@ -229,16 +229,14 @@ export default function Profile() {
                         {!showBlockedList && blockedUsers.length === 0 ? '' : ` (${blockedUsers.length})`}
                     </button>
                     {showBlockedList && (
-                        <div className="mt-2 bg-white rounded-lg border border-gray-100 divide-y divide-gray-50">
+                        <div className="mt-2 bg-white rounded-lg divide-y divide-border">
                             {blockedUsers.length === 0 ? (
-                                <p className="text-sm text-gray-400 p-3">No blocked users.</p>
+                                <p className="text-sm text-light-text p-3">No blocked users...</p>
                             ) : (
-                                blockedUsers.map((u: any) => (
-                                    <Link to={`/profile/${u.username}`}>   
-                                            <div key={u.id} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded">
-                                                <Avatar url={u.avatar ? imageUrl(u.avatar) : undefined} size="sm" />
-                                                <span className="text-sm font-medium text-dark-bg">@{u.username}</span>
-                                            </div>
+                                blockedUsers.map((user: any) => (
+                                    <Link key={user.id} to={`/profile/${user.username}`} className="flex items-center gap-3 p-3 rounded transition-colors">
+                                        <Avatar url={user.avatar ? imageUrl(user.avatar) : undefined} size="sm" />
+                                        <span className="text-sm hover:underline font-medium text-dark-bg">@{user.username}</span>
                                     </Link>
                                 ))
                             )}
@@ -246,7 +244,7 @@ export default function Profile() {
                     )}
                 </div>
             )}
-            <div className="flex flex-col w-full max-w-2xl mx-auto px-4 border-t border-gray-100 pt-6">
+            <div className="flex flex-col w-full max-w-2xl mx-auto  pt-6">
                 <div className="flex flex-col items-center">
                     {posts.map((post: any) => (
                         <CardPost

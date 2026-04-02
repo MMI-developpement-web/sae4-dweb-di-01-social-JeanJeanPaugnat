@@ -6,8 +6,8 @@ import { cn } from "../../lib/utils";
 const AvatarVariants = cva("relative flex-shrink-0 rounded-full overflow-hidden", {
   variants: {
     size: {
-      sm: "size-[44px]",
-      xl: "size-[72px]",
+      sm: "size-[2.75rem]",
+      xl: "size-[4.5rem]",
     },
   },
   defaultVariants: {
@@ -46,7 +46,7 @@ export default function Avatar({
       {editable && (
         <>
           <div
-            className="absolute inset-0 flex items-center justify-center bg-[rgba(110,110,110,0.35)] cursor-pointer"
+            className="absolute inset-0 flex items-center justify-center bg-overlay cursor-pointer"
             onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           >
             <ImagePlus className="text-white" size={30} />

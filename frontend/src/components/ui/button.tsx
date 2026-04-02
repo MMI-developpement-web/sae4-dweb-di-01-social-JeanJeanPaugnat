@@ -11,7 +11,7 @@ import type { IconName } from "./Icon";
 // - icon: nom d'icône lucide (optionnel), affiche l'icône avant le texte; si pas de texte = icon-only
 
 const ButtonVariants = cva(
-  "inline-flex items-center justify-center gap-[4px] rounded-[8px] cursor-pointer font-poppins font-medium transition-opacity hover:opacity-80 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
+  "inline-flex items-center justify-center gap-[0.25rem] rounded-[0.5rem] cursor-pointer font-poppins font-medium transition-opacity hover:opacity-80 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -21,9 +21,9 @@ const ButtonVariants = cva(
         simple: "hover:bg-black/5 transition-colors text-light-text",
       },
       size: {
-        md: "px-[16px] py-[6px] h-[35px] p12-medium",
-        lg: "px-[20px] py-[12px] h-[55px] w-full title18-medium",
-        icon: "size-[32px] p-0 fill-current",
+        md: "px-[1rem] py-[0.375rem] h-[2.1875rem] p12-medium",
+        lg: "px-[1.25rem] py-[0.75rem] h-[3.4375rem] w-full title18-medium",
+        icon: "size-[2rem] p-0 fill-current",
       },
     },
     compoundVariants: [

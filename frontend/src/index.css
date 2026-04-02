@@ -3,42 +3,63 @@
 
 @import "tailwindcss";
 
-@theme {
+/* ── Overlay banner (inline style only, pas de classe Tailwind) ─ */
+:root {
+  --color-overlay-banner: rgba(54, 54, 54, 0.56);
+}
 
-  /* Toutes mes fonts */
-  --font-sans: 'Poppins', sans-serif;
+/* ── Dark mode — préférence système ─────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-light-bg:       #101014;
+    --color-light-text:     #6b6b6b;
+    --color-gray-input-bg:  #262630;
+    --color-dark-bg:        #f0f0f0;
+    --color-dark-text:      #d0d0d0;
+    --color-muted:          #808080;
+    --color-overlay-banner: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* ── Dark mode — override manuel ────────────────────────────── */
+[data-theme="dark"] {
+  --color-light-bg:       #101014;
+  --color-light-text:     #6b6b6b;
+  --color-gray-input-bg:  #262630;
+  --color-dark-bg:        #f0f0f0;
+  --color-dark-text:      #d0d0d0;
+  --color-muted:          #808080;
+  --color-overlay-banner: rgba(0, 0, 0, 0.7);
+}
+
+/* ── Tailwind tokens ─────────────────────────────────────────── */
+@theme inline {
+  --font-sans:    'Poppins', sans-serif;
   --font-poppins: 'Poppins', sans-serif;
 
-  /* toutes mes couleurs */
-  --color-white: #ffffff;
-
-  --color-light-bg: #EFEFEF;
-  --color-light-text: #9C9C9C;
-
+  --color-white:         #ffffff;
+  --color-light-bg:      #EFEFEF;
+  --color-light-text:    #9C9C9C;
   --color-gray-input-bg: #DADADA;
+  --color-dark-bg:       #333333;
+  --color-dark-text:     #434343;
+  --color-muted:         #656565;
+  --color-brand:         #4a92a6;
+  --color-red-warning:   #F22D2D;
+  --color-overlay:       rgba(110, 110, 110, 0.35);
 
-  --color-dark-bg: #333;
-  --color-dark-text: #434343;
-
-  --color-red-warning: #F22D2D;
-
-
-  /* Toutes mes tailles de polices */
-  --font-size-xsmall: 0.875rem;
-  --font-size-small: 0.875rem;
-
-  --font-size-base: 1rem;
-
-  --font-size-large: 1.125rem;
-  --font-size-xlarge: 1.25rem;
+  --font-size-xsmall:  0.75rem;
+  --font-size-small:   0.875rem;
+  --font-size-base:    1rem;
+  --font-size-large:   1.125rem;
+  --font-size-xlarge:  1.25rem;
   --font-size-xxlarge: 1.875rem;
-
-
 }
 
 body {
   font-family: var(--font-poppins);
-  
+  background-color: var(--color-light-bg);
+  color: var(--color-dark-bg);
 }
 
 .title16-medium {

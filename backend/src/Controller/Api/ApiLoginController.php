@@ -29,17 +29,35 @@ class ApiLoginController extends AbstractController
         if ($user->getIsBlocked()) {
             return $this->json([
                 'error' => 'Your account has been suspended for violating the terms of use.'
-            ], Response::HTTP_FORBIDDEN); // 403 Forbidden est le code HTTP correct ici
+            ], Response::HTTP_FORBIDDEN);
         }
 
-        // Si on arrive ici, c'est que l'authentification a réussi (grâce à json_login dans security.yaml)
-        // $user est automatiquement injecté grâce à #[CurrentUser()]
-        
-        // Vous pouvez maintenant générer un token d'accès pour cet utilisateur et le retourner dans la réponse
-        $token = $tokenService->createNewToken($user); // Supposons que votre entité User a une relation avec AccessToken
+        $token = $tokenService->createNewToken($user);
         
         return $this->json([
             'access_token' => $token->getValue(),
+            'user_id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'username' => $user->getUsername(),
+        ]);
+    }
+
+    #[Route('/get_login', name: 'login_verify', methods: ['GET'], format: 'json')]
+    public function verify(
+        #[CurrentUser()] ?User $user,
+    ): Response
+    {
+        if (null === $user) {
+            return $this->json(['error' => 'Invalid or expired token'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($user->getIsBlocked()) {
+            return $this->json([
+                'error' => 'Your account has been suspended for violating the terms of use.'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        return $this->json([
             'user_id' => $user->getId(),
             'email' => $user->getEmail(),
             'username' => $user->getUsername(),
