@@ -3,12 +3,12 @@
 
 @import "tailwindcss";
 
-/* ── Overlay banner (inline style only, pas de classe Tailwind) ─ */
+
 :root {
   --color-overlay-banner: rgba(54, 54, 54, 0.56);
 }
 
-/* ── Dark mode — préférence système ─────────────────────────── */
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-light-bg:       #101014;
@@ -21,7 +21,7 @@
   }
 }
 
-/* ── Dark mode — override manuel ────────────────────────────── */
+
 [data-theme="dark"] {
   --color-light-bg:       #101014;
   --color-light-text:     #6b6b6b;
@@ -32,7 +32,7 @@
   --color-overlay-banner: rgba(0, 0, 0, 0.7);
 }
 
-/* ── Tailwind tokens ─────────────────────────────────────────── */
+
 @theme inline {
   --font-sans:    'Poppins', sans-serif;
   --font-poppins: 'Poppins', sans-serif;

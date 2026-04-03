@@ -68,10 +68,7 @@ let logout = async function() {
     useAuthStore.getState().clearAuth();
 }
 
-/**
- * Appelé au démarrage de l'app : lit le token dans localStorage,
- * vérifie sa validité auprès du backend via GET /login, et hydrate le store si ok.
- */
+
 let hydrateAuth = async function() {
     const token = localStorage.getItem('mon_token');
 

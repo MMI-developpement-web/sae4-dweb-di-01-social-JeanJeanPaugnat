@@ -17,9 +17,6 @@ let handleFollowToggle = async (username: string) => {
 
         if (response.ok) {
             const data = await response.json();
-            // Ici, tu dois mettre à jour l'état (State) de ton composant 
-            // pour que le bouton change instantanément (isFollowing et followersCount)
-            console.log("Follow toggle successful:", data);
             return {
                 isFollowing: data.isFollowing,
                 followers_count: data.followers_count
