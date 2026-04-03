@@ -202,4 +202,38 @@ class ApiPostController extends AbstractController
         return $this->json($replies, Response::HTTP_OK, [], ['groups' => 'default']);
     }
 
+    #[Route('/post/{id}/retweet', name: 'post_retweet', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function retweetPost(PostRepository $postRepository, #[CurrentUser] User $user, Request $request, int $id): Response
+    {
+        $original = $postRepository->find($id);
+        if (!$original) {
+            return $this->json(['error' => 'Post not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($original->getIsCensored()) {
+            return $this->json(['error' => 'Cannot retweet a censored post'], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $comment = isset($data['comment']) ? trim($data['comment']) : null;
+
+        $retweet = new Post();
+        $retweet->setContent($original->getRawContent() ?? '');
+        $retweet->setMedia($original->getMedia());
+        $retweet->setDateCreation(new \DateTime());
+        $retweet->setUser($user);
+        $retweet->setIsRetweet(true);
+        $retweet->setRetweetAuthor($original->getUser()?->getUsername());
+        if ($comment !== null && $comment !== '') {
+            $retweet->setRetweetComment($comment);
+        }
+
+        $original->setRetweetsCount($original->getRetweetsCount() + 1);
+
+        $postRepository->save($retweet, false);
+        $postRepository->save($original, true);
+
+        return $this->json($retweet, Response::HTTP_CREATED, [], ['groups' => 'default']);
+    }
+
 }

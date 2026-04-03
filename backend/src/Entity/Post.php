@@ -52,6 +52,22 @@ class Post
     #[Groups('default')]
     private bool $isCensored = false;
 
+    #[Groups('default')]
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isRetweet = false;
+
+    #[Groups('default')]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $retweetAuthor = null;
+
+    #[Groups('default')]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $retweetComment = null;
+
+    #[Groups('default')]
+    #[ORM\Column(options: ["default" => 0])]
+    private int $retweetsCount = 0;
+
     public function __construct()
     {
         $this->likedBy = new ArrayCollection();
@@ -176,6 +192,59 @@ class Post
     public function setIsCensored(bool $isCensored): static
     {
         $this->isCensored = $isCensored;
+
+        return $this;
+    }
+
+    public function getRawContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function getIsRetweet(): bool
+    {
+        return $this->isRetweet;
+    }
+
+    public function setIsRetweet(bool $isRetweet): static
+    {
+        $this->isRetweet = $isRetweet;
+
+        return $this;
+    }
+
+    public function getRetweetAuthor(): ?string
+    {
+        return $this->retweetAuthor;
+    }
+
+    public function setRetweetAuthor(?string $retweetAuthor): static
+    {
+        $this->retweetAuthor = $retweetAuthor;
+
+        return $this;
+    }
+
+    public function getRetweetComment(): ?string
+    {
+        return $this->retweetComment;
+    }
+
+    public function setRetweetComment(?string $retweetComment): static
+    {
+        $this->retweetComment = $retweetComment;
+
+        return $this;
+    }
+
+    public function getRetweetsCount(): int
+    {
+        return $this->retweetsCount;
+    }
+
+    public function setRetweetsCount(int $retweetsCount): static
+    {
+        $this->retweetsCount = $retweetsCount;
 
         return $this;
     }

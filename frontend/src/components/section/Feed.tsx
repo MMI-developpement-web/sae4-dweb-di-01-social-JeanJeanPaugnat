@@ -26,8 +26,12 @@ interface Post {
     media?: string[];
     likes_count: number;
     replies_count: number;
+    retweets_count: number;
     is_liked: boolean;
     is_censored?: boolean;
+    is_retweet?: boolean;
+    retweet_author?: string;
+    retweet_comment?: string;
 }
 
 const LIMIT = 10;
@@ -170,9 +174,13 @@ export default function Feed() {
                         onDeleteSuccess={handleRemovePost}
                         likesCount={post.likes_count}
                         repliesCount={post.replies_count}
+                        retweetsCount={post.retweets_count}
                         is_liked={post.is_liked}
                         media={post.media ?? []}
                         isCensored={post.is_censored ?? false}
+                        isRetweet={post.is_retweet ?? false}
+                        retweetAuthor={post.retweet_author}
+                        retweetComment={post.retweet_comment}
                     />
                 ))}
             </div>

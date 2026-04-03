@@ -1,16 +1,17 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { Heart, Trash2, Brush, MessageSquare } from "lucide-react";
+import { Heart, Trash2, Brush, MessageSquare, Repeat2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import Avatar from "./Avatar";
 import { useState } from "react";
 import { handleLikeToggle } from "../../utils/SocialData";
-import { deletePost, createReply, getReplies } from "../../utils/PostData";
+import { deletePost, createReply, getReplies, retweetPost } from "../../utils/PostData";
 import MediaCarousel from "./MediaCarousel";
 import Input from "./Input";
 import Button from "./button";
 import ReplyItem from "./ReplyItem";
 import DropdownMenu, { DropdownMenuItem } from "./DropdownMenu";
+import RetweetModal from "./RetweetModal";
 
 const cardPostVariants = cva(
   "bg-light-bg relative border border-gray-300 border-b-0 px-6 py-[1.875rem] flex flex-col gap-3 w-full  last:border-b first:rounded-t-2xl",
@@ -37,9 +38,13 @@ export interface CardPostProps
   postId: number; 
   likesCount?: number; 
   repliesCount?: number;
+  retweetsCount?: number;
   is_liked?: boolean;
   media?: string[];
   isCensored?: boolean;
+  isRetweet?: boolean;
+  retweetAuthor?: string;
+  retweetComment?: string;
   onDeleteSuccess?: (postId: number) => void;
 }
 
@@ -53,20 +58,27 @@ export default function CardPost({
   content,
   likesCount,
   repliesCount,
+  retweetsCount,
   is_liked,
   media,
   isCensored,
+  isRetweet,
+  retweetAuthor,
+  retweetComment,
   onDeleteSuccess,
   ...props
 }: CardPostProps) {
     const [liked, setLiked] = useState(is_liked);
     const [likeCount, setLikeCount] = useState(likesCount);
     const [replyCount, setReplyCount] = useState(repliesCount ?? 0);
+    const [retweetCount, setRetweetCount] = useState(retweetsCount ?? 0);
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyText, setReplyText] = useState('');
     const [replies, setReplies] = useState<any[]>([]);
     const [repliesLoaded, setRepliesLoaded] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [retweetModalOpen, setRetweetModalOpen] = useState(false);
+    const [retweetSubmitting, setRetweetSubmitting] = useState(false);
     const navigate = useNavigate();
     const isOwner = localStorage.getItem('username') === username;
 
@@ -122,8 +134,25 @@ export default function CardPost({
         setSubmitting(false);
     };
 
+    const handleRetweet = async (comment?: string) => {
+        if (retweetSubmitting) return;
+        setRetweetSubmitting(true);
+        const result = await retweetPost(postId, comment);
+        if (result) {
+            setRetweetCount(prev => prev + 1);
+        }
+        setRetweetSubmitting(false);
+        setRetweetModalOpen(false);
+    };
+
   return (
     <article className={cn(cardPostVariants({ isFirst }), className)} {...props}>
+      {isRetweet && retweetAuthor && (
+        <div className="flex items-center gap-1.5 text-xs text-light-text -mb-1">
+          <Repeat2 size={13} className="text-green-500" />
+          <span>Retweeted from <Link to={`/profile/${retweetAuthor}`} className="font-medium hover:underline">@{retweetAuthor}</Link></span>
+        </div>
+      )}
       <div className="flex items-start justify-between w-full">
         <div className="flex gap-2.5 items-center">
           <Link to={`/profile/${username}`}>
@@ -151,12 +180,33 @@ export default function CardPost({
           </DropdownMenu>
         )}
       </div>
-      <p className="font-poppins font-normal text-dark-text text-[0.875rem] leading-normal w-full wrap-break-word">
-        {content}
-      </p>
-      {!isCensored && media && media.length > 0 && (
-        <MediaCarousel media={media} />
+
+      {isRetweet && retweetComment ? (
+        <>
+          <p className="font-poppins font-normal text-dark-text text-[0.875rem] leading-normal w-full wrap-break-word">
+            {retweetComment}
+          </p>
+          <div className="border border-gray-200 rounded-xl px-4 py-3 flex flex-col gap-1 bg-gray-50">
+            <span className="text-xs text-light-text font-medium">@{retweetAuthor}</span>
+            <p className="font-poppins font-normal text-dark-text text-[0.875rem] leading-normal wrap-break-word">
+              {content}
+            </p>
+            {!isCensored && media && media.length > 0 && (
+              <MediaCarousel media={media} />
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="font-poppins font-normal text-dark-text text-[0.875rem] leading-normal w-full wrap-break-word">
+            {content}
+          </p>
+          {!isCensored && media && media.length > 0 && (
+            <MediaCarousel media={media} />
+          )}
+        </>
       )}
+
       {!isCensored && (
       <div className="flex  gap-4">
           <div className="flex items-center gap-2 mt-2">
@@ -174,6 +224,12 @@ export default function CardPost({
                     <MessageSquare className={`w-5 h-5 transition-colors ${replyOpen ? 'text-blue-500' : 'text-dark-text hover:text-blue-400'}`} />
               </button>
               <span className="text-sm text-gray-600">{replyCount}</span>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <button onClick={() => setRetweetModalOpen(true)} aria-label="Retweet">
+                <Repeat2 className="w-5 h-5 text-dark-text hover:text-green-500 transition-colors" />
+              </button>
+              <span className="text-sm text-gray-600">{retweetCount}</span>
             </div>
       </div>
       )}
@@ -204,6 +260,14 @@ export default function CardPost({
             </div>
           )}
         </div>
+      )}
+
+      {retweetModalOpen && (
+        <RetweetModal
+          onClose={() => setRetweetModalOpen(false)}
+          onRetweet={handleRetweet}
+          submitting={retweetSubmitting}
+        />
       )}
           
   
