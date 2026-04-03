@@ -177,4 +177,23 @@ let getReplies = async function(postId: number) {
     return await response.json();
 };
 
-export { createPost, getAllPosts, getFollowingPosts, deletePost, getPost, updatePost, createReply, getReplies };
+let retweetPost = async function(postId: number, comment?: string) {
+    let token = localStorage.getItem('mon_token');
+    let response = await fetch(`${API_URL}/post/${postId}/retweet`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(comment ? { comment } : {}),
+    });
+
+    if (!response.ok) {
+        console.error("Failed to retweet post");
+        return null;
+    }
+
+    return await response.json();
+};
+
+export { createPost, getAllPosts, getFollowingPosts, deletePost, getPost, updatePost, createReply, getReplies, retweetPost };
